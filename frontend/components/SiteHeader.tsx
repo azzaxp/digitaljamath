@@ -1,11 +1,13 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
 export function SiteHeader() {
     return (
         <header className="border-b bg-white dark:bg-gray-950 sticky top-0 z-50">
             <div className="container mx-auto px-4 lg:px-6 h-16 flex items-center justify-between">
-                <Link className="flex items-center justify-center font-bold text-xl" href="/">
+                <Link className="flex items-center justify-center font-bold text-xl gap-2" href="/">
+                    <Image src="/logo.png" alt="DigitalJamath Logo" width={32} height={32} className="h-8 w-8" />
                     DigitalJamath
                 </Link>
                 <nav className="hidden md:flex gap-6 items-center">

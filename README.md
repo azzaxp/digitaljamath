@@ -1,6 +1,6 @@
 # DigitalJamath
 
-**DigitalJamath** is an open-source, production-grade SaaS ERP for Indian Masjids, designed with strict compliance (FCRA, 80G) and community trust in mind.
+**DigitalJamath** is an open-source, production-grade SaaS ERP for Indian Masjids, designed with strict compliance and community trust in mind.
 
 ## Tech Stack
 - **Backend**: Django 5.x, DRF
@@ -17,7 +17,7 @@
 # DigitalJamath - Digital Ummah Ecosystem / Digital Jamath Portal
 
 <p align="center">
-  <img src="frontend/public/images/logo.png" alt="DigitalJamath Logo" width="200" onerror="this.style.display='none'"/>
+  <img src="frontend/public/logo.png" alt="DigitalJamath Logo" width="200" onerror="this.style.display='none'"/>
 </p>
 
 **DigitalJamath** is a comprehensive, open-source platform designed to digitize and manage community operations for Mosques (Masjids), Jamaths, and Welfare organizations. It provides a robust multi-tenant architecture to handle census data, financial management (Baitul Maal), welfare distribution, and community engagement.
@@ -30,7 +30,7 @@ Built with **Django (backend)** and **Next.js (frontend)**, it emphasizes data p
 
 *   **Digital Census (Jamath Directory):** manage detailed household and member profiles.
 *   **Baitul Maal (Finance):** Track donations, subscriptions, and expenses with transparency.
-*   **Multi-Tenant Architecture:** Every Masjid gets its own isolated database schema and subdomain (e.g., `jamablr.mizan.com`).
+*   **Multi-Tenant Architecture:** Every Masjid gets its own isolated database schema and subdomain (e.g., `jamablr.digitaljamath.com`).
 *   **Welfare (Khidmat):** Manage grant applications, workflows, and beneficiary tracking.
 *   **Basira (AI Audit):** (Upcoming) Intelligent audit guard for financial anomalies.
 *   **Surveys (Tahqeeq):** Create and distribute community surveys.
@@ -158,8 +158,9 @@ The `.env` file controls your environment. Key variables include:
 | `DEBUG` | Toggle debug mode (False for prod) | `True` |
 | `SECRET_KEY` | Django secret key | *random* |
 | `DATABASE_URL` | Postgres connection string | `postgres://...` |
-| `BREVO_SMTP_KEY` | Email provider API Key (Brevo) | - |
-| `DEFAULT_FROM_EMAIL` | Sender email address | `noreply@...` |
+| `BREVO_EMAIL_USER` | Brevo Login Email | - |
+| `BREVO_SMTP_KEY` | Brevo SMTP Key (v3) | - |
+| `DEFAULT_FROM_EMAIL` | Sender email (must be verified in Cloudflare DNS for Brevo) | `noreply@digitaljamath.com` |
 
 **Security Note:** Never commit your `.env` file to version control.
 
@@ -169,7 +170,7 @@ The `.env` file controls your environment. Key variables include:
 
 DigitalJamath uses **Schema Isolation**.
 *   **Public Schema:** Stores tenant info (`Client`) and domain mapping (`Domain`).
-*   **Tenant Schemas:** Each Masjid gets a schema (e.g., `jama_blr`) containing its own `users`, `households`, `transactions` tables.
+*   **Tenant Schemas:** Each Masjid gets a schema (e.g., `jama-blr`) containing its own `users`, `households`, `transactions` tables.
 
 **To create a new tenant (Masjid):**
 1.  Log in to the Django Admin (`/admin`) on the public domain.
@@ -181,7 +182,13 @@ DigitalJamath uses **Schema Isolation**.
 
 ## 🤝 Contributing
 
-We welcome contributions! Please follow these steps:
+We welcome contributions! We are specifically looking for:
+- **Django Developers**: To build the compliance engine.
+- **Next.js Wizards**: To craft accessible interfaces.
+- **Reviewers & Testers**: To hunt bugs, verify releases, and ensure stability.
+- **Shariah Analysts**: To verify financial logic.
+
+Please follow these steps:
 
 1.  Fork the repository.
 2.  Create a feature branch (`git checkout -b feature/AmazingFeature`).

@@ -7,13 +7,13 @@ export function SiteFooter() {
                 <div className="grid md:grid-cols-3 gap-8 mb-8">
                     <div>
                         <h3 className="font-bold mb-4">Digital Ummah Foundation</h3>
-                        <p className="text-sm text-gray-500">Mangaluru, India (The Silicon Beach)</p>
+                        <p className="text-sm text-gray-500">Mangaluru, India (The Silicon Beach of India)</p>
                     </div>
                     <div>
                         <h3 className="font-bold mb-4">Contact</h3>
                         <ul className="space-y-2 text-sm text-gray-500">
-                            <li>General: <a href="mailto:salam@projectmizan.org" className="hover:text-blue-600">salam@projectmizan.org</a></li>
-                            <li>Contributors: <a href="mailto:contribute@projectmizan.org" className="hover:text-blue-600">contribute@projectmizan.org</a></li>
+                            <li>General: <a href="mailto:salam@digitaljamath.com" className="hover:text-blue-600">salam@digitaljamath.com</a></li>
+                            <li>Contributors: <a href="mailto:contribute@digitaljamath.com" className="hover:text-blue-600">contribute@digitaljamath.com</a></li>
                         </ul>
                     </div>
                     <div>

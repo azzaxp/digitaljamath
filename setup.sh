@@ -29,6 +29,17 @@ if [ ! -d "venv" ]; then
     python3 -m venv venv
     echo "Created virtual environment."
 fi
+
+# Check for .env
+if [ ! -f ".env" ]; then
+    echo "⚠️  No .env file found. Copying from .env.example..."
+    if [ -f ".env.example" ]; then
+        cp .env.example .env
+        echo "✅ Created .env. PLEASE EDIT IT with your database and email credentials!"
+    else
+        echo "❌ .env.example missing! Please create .env manually."
+    fi
+fi
 source venv/bin/activate
 pip install -r requirements.txt
 echo "✅ Python dependencies installed."
@@ -99,5 +110,6 @@ echo "  1. python manage.py runserver"
 echo "  2. cd frontend && npm run dev"
 echo ""
 echo "System Config:"
-echo "  Go to /admin/shared/systemconfig/ to set API keys."
+echo "  Ensure your .env file is updated with Brevo SMTP keys for email."
+echo "  Go to /admin/shared/systemconfig/ for other system settings."
 echo "=============================================="

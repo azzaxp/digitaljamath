@@ -257,10 +257,10 @@ export function MainLanding() {
                             </div>
                             <div className="bg-white/10 rounded-2xl p-8 backdrop-blur-sm">
                                 <div className="text-center">
-                                    <div className="text-6xl font-bold mb-2">100%</div>
-                                    <div className="text-xl mb-4">Shariah Compliant</div>
+                                    <div className="text-3xl font-bold mb-2">Committed to</div>
+                                    <div className="text-xl mb-4">Shariah Principles</div>
                                     <p className="text-blue-100 text-sm">
-                                        Designed in consultation with Islamic scholars to ensure all financial operations follow Fiqh guidelines for Zakat, Sadaqah, and Waqf management.
+                                        We are actively working towards full Shariah compliance, designing our financial engines to respect the boundaries of Zakat, Sadaqah, and Waqf management.
                                     </p>
                                 </div>
                             </div>
@@ -300,17 +300,20 @@ export function MainLanding() {
                                 </div>
                                 <CardHeader>
                                     <CardTitle>Cloud Managed</CardTitle>
-                                    <CardDescription>We handle the servers and security.</CardDescription>
+                                    <CardDescription>Less hassle. We manage things - managed hosting charges, like Frappe does for ERPNext.</CardDescription>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="text-4xl font-bold mb-4">₹999<span className="text-sm font-normal text-muted-foreground">/mo</span></div>
                                     <ul className="space-y-2">
-                                        <li className="flex items-center"><Check className="mr-2 h-4 w-4 text-green-500" /> Daily Backups</li>
-                                        <li className="flex items-center"><Check className="mr-2 h-4 w-4 text-green-500" /> AI Audit Included</li>
+                                        <li className="flex items-center"><Check className="mr-2 h-4 w-4 text-green-500" /> AI Enabled</li>
+                                        <li className="flex items-center"><Check className="mr-2 h-4 w-4 text-green-500" /> Managed Hosting</li>
+                                        <li className="flex items-center"><Check className="mr-2 h-4 w-4 text-green-500" /> Cloud Features</li>
                                         <li className="flex items-center"><Check className="mr-2 h-4 w-4 text-green-500" /> SMS Notifications</li>
-                                        <li className="flex items-center"><Check className="mr-2 h-4 w-4 text-green-500" /> Priority Support</li>
                                     </ul>
-                                    <Button className="w-full mt-6 bg-gradient-to-r from-blue-600 to-indigo-600">Start 14-Day Trial</Button>
+                                    <div className="mt-6 space-y-2">
+                                        <Button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600">Start Free Trial for 3 Months</Button>
+                                        <p className="text-xs text-center text-gray-500">until March 2026</p>
+                                    </div>
                                 </CardContent>
                             </Card>
 
@@ -328,7 +331,9 @@ export function MainLanding() {
                                         <li className="flex items-center"><Check className="mr-2 h-4 w-4 text-green-500" /> On-Premise Deployment</li>
                                         <li className="flex items-center"><Check className="mr-2 h-4 w-4 text-green-500" /> Dedicated Account Manager</li>
                                     </ul>
-                                    <Button className="w-full mt-6" variant="outline">Contact Sales</Button>
+                                    <Button className="w-full mt-6" variant="outline" asChild>
+                                        <a href="mailto:salam@digitaljamath.com">Contact Sales</a>
+                                    </Button>
                                 </CardContent>
                             </Card>
                         </div>
