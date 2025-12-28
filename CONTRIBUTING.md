@@ -1,6 +1,6 @@
-# Contributing to Project Mizan
+# Contributing to DigitalJamath
 
-**Bismillah.** Thank you for your interest in contributing to Project Mizan. We are building the digital infrastructure for a transparent and effective Ummah.
+**Bismillah.** Thank you for your interest in contributing to DigitalJamath. We are building the digital infrastructure for a transparent and effective Ummah.
 
 ## The Mission
 "Good intentions deserve great systems."

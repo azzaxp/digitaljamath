@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-# Project Mizan Setup Script
+# DigitalJamath Setup Script
 # Handles dependencies, migrations, and initial tenant setup.
 
 echo "=============================================="

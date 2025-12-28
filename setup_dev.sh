@@ -3,7 +3,7 @@
 # Exit on error
 set -e
 
-echo "=== Project Mizan Setup ==="
+echo "=== DigitalJamath Setup ==="
 
 # 1. Check Python
 if ! command -v python3 &> /dev/null; then

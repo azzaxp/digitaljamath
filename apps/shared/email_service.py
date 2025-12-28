@@ -1,5 +1,5 @@
 """
-Email service for Project Mizan.
+Email service for DigitalJamath.
 Uses Brevo SMTP for sending emails.
 """
 from django.core.mail import send_mail, EmailMultiAlternatives
@@ -41,7 +41,7 @@ class EmailService:
     @classmethod
     def send_password_reset(cls, email: str, reset_url: str, user_name: str = "User") -> bool:
         """Send password reset email."""
-        subject = "Reset Your Project Mizan Password"
+        subject = "Reset Your DigitalJamath Password"
         html_content = f"""
         <!DOCTYPE html>
         <html>
@@ -62,16 +62,16 @@ class EmailService:
                 </div>
                 <div class="content">
                     <p>Assalamu Alaikum {user_name},</p>
-                    <p>You requested to reset your password for Project Mizan. Click the button below to create a new password:</p>
+                    <p>You requested to reset your password for DigitalJamath. Click the button below to create a new password:</p>
                     <p style="text-align: center;">
                         <a href="{reset_url}" class="button" style="color: white;">Reset Password</a>
                     </p>
                     <p>This link will expire in 1 hour for security reasons.</p>
                     <p>If you didn't request this, please ignore this email or contact your administrator.</p>
-                    <p>JazakAllah Khair,<br>Project Mizan Team</p>
+                    <p>JazakAllah Khair,<br>DigitalJamath Team</p>
                 </div>
                 <div class="footer">
-                    <p>This is an automated message from Project Mizan - Digital Ummah Foundation</p>
+                    <p>This is an automated message from DigitalJamath - Digital Ummah Foundation</p>
                 </div>
             </div>
         </body>
@@ -83,7 +83,7 @@ class EmailService:
     def send_email_verification(cls, email: str, verification_url: str, 
                                  masjid_name: str = "Your Masjid") -> bool:
         """Send email verification for new tenant registration."""
-        subject = f"Verify Your Email - {masjid_name} on Project Mizan"
+        subject = f"Verify Your Email - {masjid_name} on DigitalJamath"
         html_content = f"""
         <!DOCTYPE html>
         <html>
@@ -100,20 +100,20 @@ class EmailService:
         <body>
             <div class="container">
                 <div class="header">
-                    <h1>Welcome to Project Mizan!</h1>
+                    <h1>Welcome to DigitalJamath!</h1>
                 </div>
                 <div class="content">
                     <p>Assalamu Alaikum,</p>
-                    <p>Thank you for registering <strong>{masjid_name}</strong> on Project Mizan.</p>
+                    <p>Thank you for registering <strong>{masjid_name}</strong> on DigitalJamath.</p>
                     <p>Please verify your email address by clicking the button below:</p>
                     <p style="text-align: center;">
                         <a href="{verification_url}" class="button" style="color: white;">Verify Email</a>
                     </p>
                     <p>After verification, you can access your dashboard and start managing your Jamath.</p>
-                    <p>JazakAllah Khair,<br>Project Mizan Team</p>
+                    <p>JazakAllah Khair,<br>DigitalJamath Team</p>
                 </div>
                 <div class="footer">
-                    <p>This is an automated message from Project Mizan - Digital Ummah Foundation</p>
+                    <p>This is an automated message from DigitalJamath - Digital Ummah Foundation</p>
                 </div>
             </div>
         </body>
@@ -162,7 +162,7 @@ class EmailService:
                     <p>JazakAllah Khair,<br>{masjid_name} Committee</p>
                 </div>
                 <div class="footer">
-                    <p>This is an automated message from Project Mizan - Digital Ummah Foundation</p>
+                    <p>This is an automated message from DigitalJamath - Digital Ummah Foundation</p>
                 </div>
             </div>
         </body>
@@ -206,7 +206,7 @@ class EmailService:
                     <p>JazakAllah Khair,<br>{masjid_name} Committee</p>
                 </div>
                 <div class="footer">
-                    <p>This is an automated message from Project Mizan - Digital Ummah Foundation</p>
+                    <p>This is an automated message from DigitalJamath - Digital Ummah Foundation</p>
                 </div>
             </div>
         </body>

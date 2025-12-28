@@ -1,4 +1,4 @@
-# Project Mizan - Digital Jamath Management
+# DigitalJamath - Digital Jamath Management
 
 User-agent: *
 Allow: /

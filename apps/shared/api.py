@@ -86,7 +86,7 @@ class TenantInfoView(generics.GenericAPIView):
     def get(self, request):
         tenant = request.tenant
         if tenant.schema_name == 'public':
-            return Response({"name": "Project Mizan", "is_public": True})
+            return Response({"name": "DigitalJamath", "is_public": True})
         
         return Response({
             "name": tenant.name,

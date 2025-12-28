@@ -237,5 +237,5 @@ class NotificationService:
         Currently just logs to console (mock implementation).
         """
         print(f"[MOCK SMS] To: {phone_number}")
-        print(f"  Your OTP for Project Mizan is: {otp}")
+        print(f"  Your OTP for DigitalJamath is: {otp}")
         return True

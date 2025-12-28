@@ -301,7 +301,7 @@ class BasiraDataAgentView(APIView):
                         "Authorization": f"Bearer {api_key}",
                         "Content-Type": "application/json",
                         "HTTP-Referer": "https://project-mizan.com",
-                        "X-Title": "Project Mizan - Basira Data Agent"
+                        "X-Title": "DigitalJamath - Basira Data Agent"
                     },
                     json={
                         "model": "meta-llama/llama-3.2-3b-instruct:free",

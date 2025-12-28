@@ -1,6 +1,6 @@
 # DigitalJamath
 
-**Project Mizan** is an open-source, production-grade SaaS ERP for Indian Masjids, designed with strict compliance (FCRA, 80G) and community trust in mind.
+**DigitalJamath** is an open-source, production-grade SaaS ERP for Indian Masjids, designed with strict compliance (FCRA, 80G) and community trust in mind.
 
 ## Tech Stack
 - **Backend**: Django 5.x, DRF
@@ -14,13 +14,13 @@
 ### Prerequisites
 - Python 3.11+
 - PostgreSQL 16+
-# Project Mizan - Digital Ummah Ecosystem / Digital Jamath Portal
+# DigitalJamath - Digital Ummah Ecosystem / Digital Jamath Portal
 
 <p align="center">
-  <img src="frontend/public/images/logo.png" alt="Project Mizan Logo" width="200" onerror="this.style.display='none'"/>
+  <img src="frontend/public/images/logo.png" alt="DigitalJamath Logo" width="200" onerror="this.style.display='none'"/>
 </p>
 
-**Project Mizan** is a comprehensive, open-source platform designed to digitize and manage community operations for Mosques (Masjids), Jamaths, and Welfare organizations. It provides a robust multi-tenant architecture to handle census data, financial management (Baitul Maal), welfare distribution, and community engagement.
+**DigitalJamath** is a comprehensive, open-source platform designed to digitize and manage community operations for Mosques (Masjids), Jamaths, and Welfare organizations. It provides a robust multi-tenant architecture to handle census data, financial management (Baitul Maal), welfare distribution, and community engagement.
 
 Built with **Django (backend)** and **Next.js (frontend)**, it emphasizes data privacy, shariah compliance, and transparency.
 
@@ -59,7 +59,7 @@ Built with **Django (backend)** and **Next.js (frontend)**, it emphasizes data p
 
 ## 💻 System Requirements
 
-To run Project Mizan effectively, we recommend the following minimum specifications:
+To run DigitalJamath effectively, we recommend the following minimum specifications:
 
 *   **CPU:** 2 vCPUs (Recommended: 4 vCPUs for production)
 *   **RAM:** 4GB (Recommended: 8GB)
@@ -167,7 +167,7 @@ The `.env` file controls your environment. Key variables include:
 
 ## 📦 Multi-Tenancy Explanation
 
-Project Mizan uses **Schema Isolation**.
+DigitalJamath uses **Schema Isolation**.
 *   **Public Schema:** Stores tenant info (`Client`) and domain mapping (`Domain`).
 *   **Tenant Schemas:** Each Masjid gets a schema (e.g., `jama_blr`) containing its own `users`, `households`, `transactions` tables.
 
