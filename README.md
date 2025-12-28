@@ -1,4 +1,4 @@
-# Project Mizan
+# DigitalJamath
 
 **Project Mizan** is an open-source, production-grade SaaS ERP for Indian Masjids, designed with strict compliance (FCRA, 80G) and community trust in mind.
 
@@ -80,8 +80,8 @@ To run Project Mizan effectively, we recommend the following minimum specificati
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/yourusername/project_mizan.git
-    cd project_mizan
+    git clone https://github.com/yourusername/digitaljamath.git
+    cd digitaljamath
     ```
 
 2.  **Setup Environment Variables:**
@@ -110,7 +110,7 @@ To run Project Mizan effectively, we recommend the following minimum specificati
 
 ```bash
 # Navigate to project root
-cd project_mizan
+cd digitaljamath
 
 # Create virtual environment
 python -m venv venv

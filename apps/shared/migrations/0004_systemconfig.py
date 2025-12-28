@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "site_name",
-                    models.CharField(default="Project Mizan", max_length=100),
+                    models.CharField(default="DigitalJamath", max_length=100),
                 ),
                 (
                     "openrouter_api_key",

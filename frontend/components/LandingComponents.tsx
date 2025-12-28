@@ -18,7 +18,7 @@ export function OriginStorySection() {
                             For centuries, our Masjids were the centers of this social balance. But today, while the world races forward with AI and Cloud computing, our community institutions are stuck with paper registers and guesswork. The balance has tipped.
                         </p>
                         <p className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                            Project Mizan is our effort to restore it.
+                            DigitalJamath is our effort to restore it.
                         </p>
                         <p className="text-lg">
                             We are digitizing the Ummah not to make it &quot;modern,&quot; but to make it effective. By building open-source, audit-ready, and AI-assisted tools, we are giving our community the infrastructure it needs to handle the heavy weight of public trust.
@@ -88,7 +88,7 @@ export function JoinMovementSection() {
             <div className="container mx-auto px-4 md:px-6 text-center">
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl mb-6">Your Code can be a Service</h2>
                 <p className="mb-8 text-xl text-gray-300 max-w-2xl mx-auto">
-                    Project Mizan is 100% Open Source. We are looking for:
+                    DigitalJamath is 100% Open Source. We are looking for:
                 </p>
 
                 <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto mb-12 text-left">
@@ -133,7 +133,7 @@ export function FAQSection() {
                     <AccordionItem value="item-1" className="border px-4 rounded-lg">
                         <AccordionTrigger className="text-lg font-medium">Is my data secure?</AccordionTrigger>
                         <AccordionContent className="text-base text-gray-600">
-                            Yes. We use industry-standard encryption for all data. Since Project Mizan is self-hostable, you can also choose to keep all data on your own private servers for maximum privacy.
+                            Yes. We use industry-standard encryption for all data. Since DigitalJamath is self-hostable, you can also choose to keep all data on your own private servers for maximum privacy.
                         </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="item-2" className="border px-4 rounded-lg">

@@ -10,10 +10,10 @@ export default function TermsPage() {
                 <div className="prose dark:prose-invert">
                     <p>Last updated: December 2025</p>
                     <h3>1. Acceptance of Terms</h3>
-                    <p>By accessing and using Project Mizan, you accept and agree to be bound by the terms and provision of this agreement.</p>
+                    <p>By accessing and using DigitalJamath, you accept and agree to be bound by the terms and provision of this agreement.</p>
 
                     <h3>2. Description of Service</h3>
-                    <p>Project Mizan provides an open-source ERP system for Masjid management. The software is provided "as is", without warranty of any kind.</p>
+                    <p>DigitalJamath provides an open-source ERP system for Masjid management. The software is provided "as is", without warranty of any kind.</p>
 
                     <h3>3. Usage Policy</h3>
                     <p>You agree to use this software only for lawful purposes. You represent that any financial data entered (Zakat, Donations) is accurate to the best of your knowledge.</p>

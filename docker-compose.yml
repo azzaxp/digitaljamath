@@ -3,7 +3,7 @@ services:
     image: postgres:16-alpine
     container_name: mizan_db
     environment:
-      - POSTGRES_DB=project_mizan_db
+      - POSTGRES_DB=digitaljamath_db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
     ports:

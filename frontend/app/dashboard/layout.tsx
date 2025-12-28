@@ -107,7 +107,7 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
                     {/* Logo */}
                     <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200 dark:border-gray-800">
                         <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent truncate">
-                            Project Mizan
+                            DigitalJamath
                         </h1>
                         <Button
                             variant="ghost"
@@ -193,7 +193,7 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
                         </div>
                     </div>
                     <div className="px-4 py-2 text-xs text-center text-gray-400 dark:text-gray-600 border-t border-gray-100 dark:border-gray-800">
-                        v0.4 Alpha • Project Mizan
+                        v0.4 Alpha • DigitalJamath
                     </div>
                 </div>
             </aside>

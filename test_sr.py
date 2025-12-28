@@ -2,7 +2,7 @@
 import os
 import django
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "project_mizan.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "digitaljamath.settings")
 django.setup()
 
 from apps.jamath.models import ServiceRequest

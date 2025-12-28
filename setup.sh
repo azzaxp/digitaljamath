@@ -5,7 +5,7 @@ set -e
 # Handles dependencies, migrations, and initial tenant setup.
 
 echo "=============================================="
-echo "   🌙 Project Mizan - Installation Setup      "
+echo "   🌙 DigitalJamath - Installation Setup      "
 echo "=============================================="
 
 # 1. Check Prerequisites

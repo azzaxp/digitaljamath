@@ -244,7 +244,7 @@ export default function PortalDashboardPage() {
                                         </div>
                                         <div className="w-full bg-blue-50 p-3 rounded text-xs text-blue-700">
                                             <p className="font-semibold mb-1">Bank Transfer Details:</p>
-                                            <p>Account Name: Project Mizan Jamath</p>
+                                            <p>Account Name: DigitalJamath Jamath</p>
                                             <p>Account No: 1234567890</p>
                                             <p>IFSC: MZN0001234</p>
                                         </div>

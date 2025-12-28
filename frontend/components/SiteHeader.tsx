@@ -6,7 +6,7 @@ export function SiteHeader() {
         <header className="border-b bg-white dark:bg-gray-950 sticky top-0 z-50">
             <div className="container mx-auto px-4 lg:px-6 h-16 flex items-center justify-between">
                 <Link className="flex items-center justify-center font-bold text-xl" href="/">
-                    Project Mizan
+                    DigitalJamath
                 </Link>
                 <nav className="hidden md:flex gap-6 items-center">
                     <Link className="text-sm font-medium hover:text-blue-600 transition-colors" href="/about">

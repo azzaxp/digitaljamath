@@ -25,7 +25,7 @@ export function SiteFooter() {
                     </div>
                 </div>
                 <div className="border-t pt-6 text-center text-xs text-gray-400">
-                    <p>© 2025 Project Mizan. Open Source under MIT License.</p>
+                    <p>© 2025 DigitalJamath. Open Source under MIT License.</p>
                 </div>
             </div>
         </footer>

@@ -11,7 +11,7 @@ export default function PrivacyPage() {
                     <p>Last updated: December 2025</p>
 
                     <h3>1. Data Ownership</h3>
-                    <p>Project Mizan is designed as a self-hosted or tenant-isolated system. <strong>You own your data.</strong> The Digital Ummah Foundation does not sell, trade, or access your community's sensitive data without explicit permission (e.g., for support).</p>
+                    <p>DigitalJamath is designed as a self-hosted or tenant-isolated system. <strong>You own your data.</strong> The Digital Ummah Foundation does not sell, trade, or access your community's sensitive data without explicit permission (e.g., for support).</p>
 
                     <h3>2. Information We Collect</h3>
                     <p>If you use our Cloud Managed service, we collect:</p>

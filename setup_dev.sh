@@ -30,14 +30,14 @@ pip install -r requirements.txt
 echo "Setting up Database..."
 # Only create if it doesn't exist (requires psql)
 if command -v psql &> /dev/null; then
-    if ! psql -lqt | cut -d \| -f 1 | grep -qw project_mizan_db; then
-        createdb project_mizan_db
-        echo "Database 'project_mizan_db' created."
+    if ! psql -lqt | cut -d \| -f 1 | grep -qw digitaljamath_db; then
+        createdb digitaljamath_db
+        echo "Database 'digitaljamath_db' created."
     else
-        echo "Database 'project_mizan_db' already exists."
+        echo "Database 'digitaljamath_db' already exists."
     fi
 else
-    echo "Warning: 'psql' not found. Ensure PostgreSQL is installed and 'project_mizan_db' exists."
+    echo "Warning: 'psql' not found. Ensure PostgreSQL is installed and 'digitaljamath_db' exists."
 fi
 
 # 5. Migrations (Shared & Tenants)

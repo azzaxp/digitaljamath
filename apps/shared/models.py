@@ -22,7 +22,7 @@ class SystemConfig(models.Model):
     Singleton model for global system configuration.
     Stores API keys and site-wide settings.
     """
-    site_name = models.CharField(max_length=100, default="Project Mizan")
+    site_name = models.CharField(max_length=100, default="DigitalJamath")
     
     # AI Configuration
     openrouter_api_key = models.CharField(max_length=255, blank=True, null=True, help_text="API Key for Basira AI (OpenRouter)")

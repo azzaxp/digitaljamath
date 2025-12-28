@@ -88,7 +88,7 @@ export function TenantLanding() {
             </div>
 
             <footer className="mt-12 text-sm text-gray-400">
-                Powered by <a href="https://projectmizan.org" target="_blank" className="hover:underline">Project Mizan</a>
+                Powered by <a href="https://projectmizan.org" target="_blank" className="hover:underline">DigitalJamath</a>
             </footer>
         </div>
     );

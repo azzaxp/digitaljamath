@@ -179,7 +179,7 @@ export default function HelpPage() {
                         <Sparkles className="h-5 w-5 text-emerald-500" />
                         Ask Basira (بصيرة)
                     </CardTitle>
-                    <CardDescription>Your AI guide for Project Mizan</CardDescription>
+                    <CardDescription>Your AI guide for DigitalJamath</CardDescription>
                 </CardHeader>
                 <CardContent>
                     {/* Messages */}
@@ -187,7 +187,7 @@ export default function HelpPage() {
                         {messages.length === 0 ? (
                             <div className="text-center text-gray-500 py-8">
                                 <HelpCircle className="h-12 w-12 mx-auto text-gray-300 mb-3" />
-                                <p>Assalamu Alaikum! Ask me anything about Project Mizan.</p>
+                                <p>Assalamu Alaikum! Ask me anything about DigitalJamath.</p>
                             </div>
                         ) : (
                             <div className="space-y-3">
@@ -292,7 +292,7 @@ export default function HelpPage() {
 
             {/* Version Info */}
             <div className="text-center text-sm text-gray-400 pt-4 border-t">
-                <p>Project Mizan v0.2-alpha • Basira AI Guide powered by OpenRouter</p>
+                <p>DigitalJamath v0.2-alpha • Basira AI Guide powered by OpenRouter</p>
             </div>
         </div>
     );

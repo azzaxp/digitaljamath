@@ -345,7 +345,7 @@ export function MainLanding() {
                             Ready to Modernize Your Masjid?
                         </h2>
                         <p className="mx-auto max-w-[600px] text-blue-100 mb-8">
-                            Join the growing community of masjids using Project Mizan for transparent, efficient community management.
+                            Join the growing community of masjids using DigitalJamath for transparent, efficient community management.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
                             <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100" asChild>

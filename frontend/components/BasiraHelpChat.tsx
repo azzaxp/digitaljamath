@@ -24,7 +24,7 @@ const SUGGESTED_PROMPTS = [
 export default function BasiraHelpChat() {
     const [messages, setMessages] = useState<Message[]>([{
         role: "assistant",
-        content: "Assalamu Alaikum! I'm Basira, your Project Mizan guide. Ask me anything about using the system — households, finance, surveys, or troubleshooting."
+        content: "Assalamu Alaikum! I'm Basira, your DigitalJamath guide. Ask me anything about using the system — households, finance, surveys, or troubleshooting."
     }]);
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
@@ -113,7 +113,7 @@ export default function BasiraHelpChat() {
     const handleClearChat = () => {
         setMessages([{
             role: "assistant",
-            content: "Chat cleared. How can I help you with Project Mizan?"
+            content: "Chat cleared. How can I help you with DigitalJamath?"
         }]);
     };
 
@@ -197,7 +197,7 @@ export default function BasiraHelpChat() {
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
                                 onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
-                                placeholder="Ask about using Project Mizan..."
+                                placeholder="Ask about using DigitalJamath..."
                                 className="pr-12 py-6 rounded-xl border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-green-500"
                                 disabled={isLoading}
                             />

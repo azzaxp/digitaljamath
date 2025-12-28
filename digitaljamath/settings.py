@@ -56,7 +56,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'project_mizan.urls'
+ROOT_URLCONF = 'digitaljamath.urls'
 
 TEMPLATES = [
     {
@@ -74,7 +74,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'project_mizan.wsgi.application'
+WSGI_APPLICATION = 'digitaljamath.wsgi.application'
 
 # Database
 DATABASES = {
