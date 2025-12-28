@@ -1,5 +1,5 @@
-import { getApiBaseUrl } from '@/lib/config';
 "use client";
+import { getApiBaseUrl } from '@/lib/config';
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
