@@ -1,6 +1,7 @@
 /**
  * Auth utilities for making authenticated API requests.
  */
+import { getApiBaseUrl } from "@/lib/config";
 
 /**
  * Fetch wrapper that automatically adds authentication headers.
@@ -10,9 +11,7 @@ export async function fetchWithAuth(
     options: RequestInit = {}
 ): Promise<Response> {
     const token = localStorage.getItem("access_token");
-    const protocol = window.location.protocol;
-    const hostname = window.location.hostname;
-    const apiBase = `${protocol}//${hostname}:8000`;
+    const apiBase = getApiBaseUrl();
 
     const headers = {
         ...options.headers,
