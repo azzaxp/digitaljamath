@@ -45,6 +45,7 @@ TENANT_DOMAIN_MODEL = "shared.Domain"
 
 MIDDLEWARE = [
     'django_tenants.middleware.main.TenantMainMiddleware', # mandatory, top
+    'apps.shared.middleware.PublicSchemaProtectionMiddleware',  # Block public schema access
     'corsheaders.middleware.CorsMiddleware',               # CORS Middleware
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

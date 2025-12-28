@@ -16,3 +16,39 @@ class Client(TenantMixin):
 
 class Domain(DomainMixin):
     pass
+
+class SystemConfig(models.Model):
+    """
+    Singleton model for global system configuration.
+    Stores API keys and site-wide settings.
+    """
+    site_name = models.CharField(max_length=100, default="Project Mizan")
+    
+    # AI Configuration
+    openrouter_api_key = models.CharField(max_length=255, blank=True, null=True, help_text="API Key for Basira AI (OpenRouter)")
+    
+    # Email Configuration (Brevo)
+    brevo_api_key = models.CharField(max_length=255, blank=True, null=True, help_text="API Key for Brevo SMTP")
+    brevo_email_sender = models.EmailField(default="noreply@project-mizan.com", help_text="Default sender email address")
+    
+    # Feature Flags
+    enable_registration = models.BooleanField(default=True, help_text="Allow new workspaces to register")
+    maintenance_mode = models.BooleanField(default=False, help_text="Enable maintenance mode (only admins can login)")
+    
+    class Meta:
+        verbose_name = "System Configuration"
+        verbose_name_plural = "System Configuration"
+
+    def __str__(self):
+        return "System Configuration"
+
+    def save(self, *args, **kwargs):
+        # Ensure only one instance exists
+        if not self.pk and SystemConfig.objects.exists():
+            return SystemConfig.objects.first()
+        return super(SystemConfig, self).save(*args, **kwargs)
+
+    @classmethod
+    def get_solo(cls):
+        obj, created = cls.objects.get_or_create(pk=1)
+        return obj

@@ -73,7 +73,10 @@ class BasiraGuideView(APIView):
         if not user_message:
             return Response({'error': 'Message is required'}, status=400)
 
-        api_key = os.environ.get('OPENROUTER_API_KEY')
+        from apps.shared.models import SystemConfig
+        config = SystemConfig.get_solo()
+        api_key = config.openrouter_api_key or os.environ.get('OPENROUTER_API_KEY')
+        
         if not api_key:
             return Response({'error': 'API key not configured'}, status=200)
 

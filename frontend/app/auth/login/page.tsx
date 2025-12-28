@@ -5,13 +5,23 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    // Redirect if on main domain (no subdomain) - protect public schema
+    useEffect(() => {
+        const hostname = window.location.hostname;
+        // Check if it's the main domain (localhost without subdomain, or main production domain)
+        if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === 'project-mizan.com') {
+            // Redirect to landing page
+            router.replace('/');
+        }
+    }, [router]);
 
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
