@@ -40,5 +40,15 @@ services:
     ports:
       - "6379:6379"
 
+  frontend:
+    build: ./frontend
+    container_name: digitaljamath_frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://web:8000
+    depends_on:
+      - web
+
 volumes:
   postgres_data:
