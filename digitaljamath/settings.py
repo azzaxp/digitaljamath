@@ -80,7 +80,7 @@ WSGI_APPLICATION = 'digitaljamath.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django_tenants.postgresql_backend',
-        'NAME': 'project_mizan_db',
+        'NAME': 'digitaljamath_db',
         'USER': 'postgres',
         'PASSWORD': 'password',
         'HOST': 'localhost',
