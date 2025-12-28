@@ -120,6 +120,16 @@ else
     echo "[7/8] Collecting Static Files..."
     docker-compose exec web python manage.py collectstatic --noinput
     
+    # 9. Demo Data
+    echo "=============================================="
+    read -p "❓ Do you want to set up a DEMO Tenant with dummy data? (y/n) " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        echo "🚀 Setting up Demo Tenant (in container)..."
+        docker-compose exec web python manage.py setup_demo
+        echo "✅ Demo Setup Complete."
+    fi
+    
     echo "=============================================="
     echo "🎉 Production Setup Complete!"
     echo "App running at http://localhost:8000"
