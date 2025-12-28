@@ -8,6 +8,7 @@ import { User, ShieldCheck } from "lucide-react";
 
 export function TenantLanding() {
     const [masjidName, setMasjidName] = useState("Community Portal");
+    const [isValidTenant, setIsValidTenant] = useState<boolean | null>(null);
 
     useEffect(() => {
         // Fetch Tenant Info
@@ -17,20 +18,55 @@ export function TenantLanding() {
                 const hostname = window.location.hostname;
                 const apiBase = `${protocol}//${hostname}:8000`;
 
-                const res = await fetch(`${apiBase}/api/tenant-info/`);
+                // If running via docker internal networking or port forwarding, API might be on different port
+                // In production, we expect Nginx to route /api/ requests correctly
+                // So we can just use relative path if on same domain, or configurable URL
+                const apiUrl = process.env.NEXT_PUBLIC_API_URL
+                    ? `${process.env.NEXT_PUBLIC_API_URL}/api/tenant-info/`
+                    : '/api/tenant-info/';
+
+                const res = await fetch(apiUrl);
                 if (res.ok) {
                     const data = await res.json();
                     if (data.name) {
                         setMasjidName(data.name);
+                        setIsValidTenant(true);
+                    } else {
+                        setIsValidTenant(false);
                     }
+                } else {
+                    console.error("Failed to fetch tenant info: Status", res.status);
+                    setIsValidTenant(false);
                 }
             } catch (err) {
                 console.error("Failed to fetch tenant info", err);
+                setIsValidTenant(false);
             }
         };
 
         fetchTenantInfo();
     }, []);
+
+    if (isValidTenant === false) {
+        return (
+            <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col items-center justify-center p-4">
+                <div className="text-center">
+                    <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">404</h1>
+                    <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 mb-2">Masjid Not Found</h2>
+                    <p className="text-gray-600 dark:text-gray-400 mb-8">
+                        The digital jamath portal you are looking for does not exist.
+                    </p>
+                    <Button asChild>
+                        <Link href="https://digitaljamath.com">Go to Home</Link>
+                    </Button>
+                </div>
+            </div>
+        );
+    }
+
+    if (isValidTenant === null) {
+        return <div className="min-h-screen flex items-center justify-center">Loading portal...</div>;
+    }
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col items-center justify-center p-4">
@@ -88,7 +124,7 @@ export function TenantLanding() {
             </div>
 
             <footer className="mt-12 text-sm text-gray-400">
-                Powered by <a href="https://projectmizan.org" target="_blank" className="hover:underline">DigitalJamath</a>
+                Powered by <a href="https://digitaljamath.com" target="_blank" className="hover:underline">DigitalJamath</a>
             </footer>
         </div>
     );
