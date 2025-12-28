@@ -132,6 +132,12 @@ else
     
     echo "=============================================="
     echo "🎉 Production Setup Complete!"
-    echo "App running at http://localhost:8000"
+    echo ""
+    echo "Your app is running! Next steps:"
+    echo "  1. Configure your domain in .env (DOMAIN_NAME)"
+    echo "  2. Set up DNS (see DEPLOYMENT.md)"
+    echo "  3. Visit https://your-domain.com"
+    echo ""
+    echo "Demo Login: demo / demo123"
 fi
 
