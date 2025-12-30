@@ -512,3 +512,34 @@ class JournalItem(models.Model):
         if self.debit_amount == 0 and self.credit_amount == 0:
             raise ValidationError("Either debit or credit amount must be specified.")
 
+
+# ============================================================================
+# RBAC & STAFF MANAGEMENT
+# ============================================================================
+
+class StaffRole(models.Model):
+    """Dynamic roles for staff/zimmedars with permission policies."""
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    permissions = models.JSONField(default=dict, help_text="Module-level permissions, e.g., {'finance': 'admin'}")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+class StaffMember(models.Model):
+    """Assigns a user to a specific role within the tenant."""
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='staff_roles')
+    role = models.ForeignKey(StaffRole, on_delete=models.PROTECT, related_name='members')
+    designation = models.CharField(max_length=100, help_text="Official title, e.g. 'General Secretary'")
+    is_active = models.BooleanField(default=True)
+    joined_at = models.DateField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'role')
+
+    def __str__(self):
+        return f"{self.user.username} - {self.designation}"
+
+

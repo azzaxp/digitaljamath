@@ -12,9 +12,9 @@ import random
 from .models import (
     Household, Member, Survey, SurveyResponse,
     MembershipConfig, Subscription, Receipt, Announcement, ServiceRequest,
-    Ledger, Supplier, JournalEntry, JournalItem
+    Ledger, Supplier, JournalEntry, JournalItem, StaffRole, StaffMember
 )
-from .serializers import SurveySerializer, SurveyResponseSerializer
+from .serializers import SurveySerializer, SurveyResponseSerializer, StaffRoleSerializer, StaffMemberSerializer
 from .services import MembershipService, ProfileService, NotificationService
 
 
@@ -424,6 +424,21 @@ class MemberPortalMemberView(APIView):
         )
 
         return Response(MemberSerializer(member).data, status=201)
+
+
+# ============================================================================
+# RBAC APIs
+# ============================================================================
+
+class StaffRoleViewSet(viewsets.ModelViewSet):
+    queryset = StaffRole.objects.all()
+    serializer_class = StaffRoleSerializer
+    permission_classes = [IsAdminUser] # For now only admins can manage roles
+
+class StaffMemberViewSet(viewsets.ModelViewSet):
+    queryset = StaffMember.objects.all()
+    serializer_class = StaffMemberSerializer
+    permission_classes = [IsAdminUser]
 
 
 # ============================================================================
