@@ -39,9 +39,13 @@ class TenantRegistrationView(generics.CreateAPIView):
                     is_superuser=True
                 )
             
-            # Send Verification Email
-            from .utils import send_verification_email
-            send_verification_email(tenant)
+            # Send Verification Email (non-blocking - don't fail registration if email fails)
+            try:
+                from .utils import send_verification_email
+                send_verification_email(tenant)
+            except Exception as email_error:
+                # Log the error but don't fail registration
+                print(f"Warning: Failed to send verification email: {email_error}")
                 
             return Response({
                 "message": "Workspace created successfully.",
