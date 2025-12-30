@@ -16,19 +16,26 @@ export default function RegisterPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [agreedToTerms, setAgreedToTerms] = useState(false);
+    const [domainSuffix, setDomainSuffix] = useState<string>("localhost");
 
     // Registration is only for main domain - redirect subdomain visitors to signin
     useEffect(() => {
         const hostname = window.location.hostname;
         const baseDomain = getBaseDomain();
 
-        // Check if we're on a subdomain
-        const isSubdomain = hostname !== 'localhost' &&
-            hostname !== '127.0.0.1' &&
-            hostname !== baseDomain &&
-            hostname.includes('.');
+        // Set domain suffix for display (avoid hydration mismatch)
+        setDomainSuffix(getDomainSuffix());
 
-        if (isSubdomain) {
+        // Check for local dev subdomain (e.g., demo.localhost)
+        const isLocalSubdomain = hostname.endsWith('.localhost');
+
+        // Check for production subdomain
+        const isProductionSubdomain = hostname !== baseDomain &&
+            hostname.includes('.') &&
+            hostname !== 'localhost' &&
+            hostname !== '127.0.0.1';
+
+        if (isLocalSubdomain || isProductionSubdomain) {
             // On subdomain, redirect to signin (staff users don't register)
             router.replace('/auth/signin');
         }
@@ -128,7 +135,7 @@ export default function RegisterPage() {
                                 <Label htmlFor="domain">Workspace URL</Label>
                                 <div className="flex items-center space-x-2">
                                     <Input name="domain" id="domain" placeholder="jama-blr" required />
-                                    <span className="text-gray-500 text-sm whitespace-nowrap">.{getDomainSuffix()}</span>
+                                    <span className="text-gray-500 text-sm whitespace-nowrap">.{domainSuffix}</span>
                                 </div>
                                 <p className="text-xs text-gray-400">This will be your unique Masjid URL</p>
                             </div>

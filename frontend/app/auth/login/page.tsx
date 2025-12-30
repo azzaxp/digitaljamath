@@ -15,19 +15,26 @@ export default function LoginPage() {
     const [workspace, setWorkspace] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [domainSuffix, setDomainSuffix] = useState<string>("localhost");
 
     // If we're on a subdomain, redirect to /auth/signin directly
     useEffect(() => {
         const hostname = window.location.hostname;
         const baseDomain = getBaseDomain();
 
-        // Check if we're on a subdomain (not main domain, not localhost)
-        const isSubdomain = hostname !== 'localhost' &&
-            hostname !== '127.0.0.1' &&
-            hostname !== baseDomain &&
-            hostname.includes('.');
+        // Set domain suffix for display (avoid hydration mismatch)
+        setDomainSuffix(getDomainSuffix());
 
-        if (isSubdomain) {
+        // Check for local dev subdomain (e.g., demo.localhost)
+        const isLocalSubdomain = hostname.endsWith('.localhost');
+
+        // Check for production subdomain (e.g., demo.digitaljamath.com)
+        const isProductionSubdomain = hostname !== baseDomain &&
+            hostname.includes('.') &&
+            hostname !== 'localhost' &&
+            hostname !== '127.0.0.1';
+
+        if (isLocalSubdomain || isProductionSubdomain) {
             // Already on a subdomain, go directly to signin
             router.replace('/auth/signin');
         }
@@ -104,7 +111,7 @@ export default function LoginPage() {
                                         required
                                     />
                                     <span className="inline-flex items-center px-3 h-10 border border-l-0 border-gray-300 bg-gray-100 text-gray-500 text-sm rounded-r-md whitespace-nowrap">
-                                        .{getDomainSuffix()}
+                                        .{domainSuffix}
                                     </span>
                                 </div>
                             </div>
