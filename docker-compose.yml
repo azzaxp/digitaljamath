@@ -14,7 +14,7 @@ services:
   web:
     build: .
     container_name: digitaljamath_web
-    command: gunicorn --bind 0.0.0.0:8000 --timeout 300 digitaljamath.wsgi:application
+    command: gunicorn --bind 0.0.0.0:8000 --timeout 300 --reload digitaljamath.wsgi:application
     volumes:
       - .:/app
       - static_files:/app/staticfiles

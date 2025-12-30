@@ -1,5 +1,5 @@
 "use client";
-import { getApiBaseUrl } from "@/lib/config";
+import { getApiBaseUrl, APP_VERSION } from "@/lib/config";
 import { useRbac } from "@/context/RbacContext";
 
 import { usePathname, useRouter } from "next/navigation";
@@ -46,30 +46,21 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [userMenuOpen, setUserMenuOpen] = useState(false);
     const { config } = useConfig();
-    const { hasPermission, isStaff } = useRbac();
-
+    const { hasPermission, user } = useRbac();
     const handleLogout = () => {
         localStorage.removeItem("access_token");
         localStorage.removeItem("refresh_token");
         router.push("/auth/signin");
     };
 
-    const navigation = defaultNavigation.filter(item => {
-        // Always show Dashboard
-        if (item.href === '/dashboard' || item.href === '/dashboard/inbox') return true;
+    // ... (keep navigation logic same)
 
-        // RBAC Checks
+    const navigation = defaultNavigation.filter(item => {
+        if (item.href === '/dashboard' || item.href === '/dashboard/inbox') return true;
         if (item.id === 'finance') return hasPermission('finance');
         if (item.id === 'welfare') return hasPermission('welfare');
-
-        // Settings & Staff: Restricted to general 'settings' or 'jamath' admin? 
-        // Or assume Settings/Staff are for Super Admins only?
-        // Let's use 'settings' module for Settings page
         if (item.name === 'Settings') return hasPermission('settings');
-
-        // Staff page: Let's require 'settings' or specific 'jamath' admin
         if (item.name === 'Staff (Zimmedar)') return hasPermission('settings');
-
         return true;
     }).map(item => {
         if (item.id === 'households' && config?.household_label) {
@@ -78,17 +69,13 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
         return item;
     });
 
-    // Fetch pending service requests count
     const [pendingCount, setPendingCount] = useState(0);
 
     useEffect(() => {
         async function fetchPendingCount() {
             try {
                 const token = localStorage.getItem("access_token");
-
-
                 const apiBase = getApiBaseUrl();
-
                 const res = await fetch(`${apiBase}/api/jamath/service-requests/?status=PENDING`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
@@ -101,10 +88,26 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
             }
         }
         fetchPendingCount();
-        // Refresh every 60 seconds
         const interval = setInterval(fetchPendingCount, 60000);
         return () => clearInterval(interval);
     }, []);
+
+    // Helper to get initials
+    const getInitials = (name: string) => {
+        return name
+            .split(' ')
+            .map(word => word[0])
+            .join('')
+            .toUpperCase()
+            .slice(0, 2);
+    };
+
+    const displayName = user?.first_name
+        ? `${user.first_name} ${user.last_name || ''}`.trim()
+        : user?.username || 'User';
+
+    const displayEmail = user?.email || 'user@example.com';
+    const displayInitials = getInitials(displayName) || 'U';
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-slate-900 dark:to-indigo-950">
@@ -126,9 +129,9 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
                 <div className="flex flex-col h-full">
                     {/* Logo */}
                     <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200 dark:border-gray-800">
-                        <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent truncate">
+                        <Link href="/" className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent truncate">
                             DigitalJamath
-                        </h1>
+                        </Link>
                         <Button
                             variant="ghost"
                             size="icon"
@@ -142,7 +145,6 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
                     {/* Navigation */}
                     <nav className="flex-1 px-4 py-6 space-y-1 overflow-y-auto">
                         {navigation.map((item) => {
-                            // Dashboard should only be active on exact match
                             const isActive = item.href === '/dashboard'
                                 ? pathname === '/dashboard'
                                 : pathname === item.href || pathname?.startsWith(item.href + '/');
@@ -179,16 +181,16 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
                                 onClick={() => setUserMenuOpen(!userMenuOpen)}
                                 className="flex items-center justify-between w-full px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                             >
-                                <div className="flex items-center">
-                                    <div className="h-8 w-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center text-white font-bold">
-                                        A
+                                <div className="flex items-center overflow-hidden">
+                                    <div className="h-8 w-8 rounded-full bg-gradient-to-r from-blue-500 to-indigo-500 flex-shrink-0 flex items-center justify-center text-white font-bold text-xs">
+                                        {displayInitials}
                                     </div>
-                                    <div className="ml-3 text-left">
-                                        <p className="text-sm font-medium text-gray-900 dark:text-white">Admin</p>
-                                        <p className="text-xs text-gray-500 dark:text-gray-400">admin@masjid.com</p>
+                                    <div className="ml-3 text-left overflow-hidden">
+                                        <p className="text-sm font-medium text-gray-900 dark:text-white truncate max-w-[100px]">{displayName}</p>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-[100px]">{displayEmail}</p>
                                     </div>
                                 </div>
-                                <ChevronDown className="h-4 w-4 text-gray-500" />
+                                <ChevronDown className="h-4 w-4 text-gray-500 flex-shrink-0" />
                             </button>
 
                             {userMenuOpen && (
@@ -213,7 +215,7 @@ function DashboardInner({ children }: { children: React.ReactNode }) {
                         </div>
                     </div>
                     <div className="px-4 py-2 text-xs text-center text-gray-400 dark:text-gray-600 border-t border-gray-100 dark:border-gray-800">
-                        v0.4 Alpha • DigitalJamath
+                        v{APP_VERSION} • DigitalJamath
                     </div>
                 </div>
             </aside>

@@ -1,5 +1,6 @@
 "use client";
-import { getApiBaseUrl } from "@/lib/config";
+import { getApiBaseUrl, APP_VERSION } from "@/lib/config";
+import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,9 +32,6 @@ function ResetPasswordForm() {
         }
 
         try {
-            // Determine API Base URL
-
-
             const apiBase = getApiBaseUrl();
 
             const response = await fetch(`${apiBase}/api/auth/password-reset-confirm/`, {
@@ -70,40 +68,63 @@ function ResetPasswordForm() {
     }
 
     return (
-        <div className="flex min-h-screen items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-900">
-            <Card className="w-full max-w-md">
-                <CardHeader className="space-y-1">
-                    <CardTitle className="text-2xl font-bold text-center">Set New Password</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        <div className="space-y-2">
-                            <Label htmlFor="password">New Password</Label>
-                            <Input
-                                id="password"
-                                type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="confirmPassword">Confirm Password</Label>
-                            <Input
-                                id="confirmPassword"
-                                type="password"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                                required
-                            />
-                        </div>
-                        {error && <div className="text-red-500 text-sm">{error}</div>}
-                        <Button className="w-full" type="submit" disabled={isLoading}>
-                            {isLoading ? "Updating..." : "Update Password"}
-                        </Button>
-                    </form>
-                </CardContent>
-            </Card>
+        <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900">
+            {/* Header */}
+            <header className="border-b bg-white dark:bg-gray-950 sticky top-0 z-50">
+                <div className="container mx-auto px-4 lg:px-6 h-16 flex items-center justify-between">
+                    <Link className="flex items-center justify-center font-bold text-xl gap-2" href="/">
+                        <Image src="/logo.png" alt="DigitalJamath Logo" width={32} height={32} className="h-8 w-8" />
+                        DigitalJamath
+                    </Link>
+                    <Link href="/auth/signin" className="text-sm text-gray-500 hover:text-gray-700">
+                        ← Back to Login
+                    </Link>
+                </div>
+            </header>
+
+            <main className="flex-1 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+                <Card className="w-full max-w-md">
+                    <CardHeader className="space-y-1">
+                        <CardTitle className="text-2xl font-bold text-center">Set New Password</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div className="space-y-2">
+                                <Label htmlFor="password">New Password</Label>
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="confirmPassword">Confirm Password</Label>
+                                <Input
+                                    id="confirmPassword"
+                                    type="password"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    required
+                                />
+                            </div>
+                            {error && <div className="text-red-500 text-sm">{error}</div>}
+                            <Button className="w-full" type="submit" disabled={isLoading}>
+                                {isLoading ? "Updating..." : "Update Password"}
+                            </Button>
+                        </form>
+                    </CardContent>
+                </Card>
+            </main>
+
+            {/* Footer */}
+            <footer className="border-t bg-white dark:bg-gray-950 py-4">
+                <div className="container mx-auto px-4 text-center text-sm text-gray-500">
+                    <p>© {new Date().getFullYear()} DigitalJamath. Open Source under MIT License.</p>
+                    <p className="text-xs mt-1">Version {APP_VERSION}</p>
+                </div>
+            </footer>
         </div>
     );
 }

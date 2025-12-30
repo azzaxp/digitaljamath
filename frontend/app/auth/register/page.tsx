@@ -1,281 +1,162 @@
 "use client";
-import { getApiBaseUrl, getDomainSuffix, getBaseDomain, APP_VERSION } from "@/lib/config";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import Link from "next/link";
+import { useState } from 'react';
 import Image from "next/image";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-
-// Creative loading messages (Technical but themed)
-const loadingMessages = [
-    "Provisioning your secure cloud workspace...",
-    "Initializing encrypted database shards...",
-    "Configuring member registry modules...",
-    "Setting up private daily backup systems...",
-    "Deploying audit trail logs...",
-    "Generating admin access credentials...",
-    "Finalizing your dedicated digital space...",
-];
+import Link from "next/link";
+import { getDomainSuffix } from "@/lib/config";
+import Step1Identity from "./steps/Step1Identity";
+import Step2OTP from "./steps/Step2OTP";
+import Step3Setup from "./steps/Step3Setup";
+import Step4Finalize from "./steps/Step4Finalize";
 
 export default function RegisterPage() {
-    const router = useRouter();
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [agreedToTerms, setAgreedToTerms] = useState(false);
-    const [domainSuffix, setDomainSuffix] = useState<string>("localhost");
-    const [messageIndex, setMessageIndex] = useState(0);
-    const [successParams, setSuccessParams] = useState<{ email: string, workspaceUrl: string, estimatedTime: string } | null>(null);
+    const [step, setStep] = useState(1);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [formData, setFormData] = useState<any>({});
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [setupData, setSetupData] = useState<any>({});
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [verificationToken, setVerificationToken] = useState('');
+    const [taskId, setTaskId] = useState('');
+    const [loginUrl, setLoginUrl] = useState('');
 
-    // Registration is only for main domain - redirect subdomain visitors to signin
-    useEffect(() => {
-        const hostname = window.location.hostname;
-        const baseDomain = getBaseDomain();
+    const baseDomain = getDomainSuffix();
+    const APP_VERSION = process.env.NEXT_PUBLIC_APP_VERSION || '1.0.8-alpha';
 
-        // Set domain suffix for display (avoid hydration mismatch)
-        setDomainSuffix(getDomainSuffix());
+    // Step 1: Identity -> Request OTP
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handleIdentitySubmit = (data: any) => {
+        setFormData(data);
+        setStep(2);
+    };
 
-        // Check for local dev subdomain (e.g., demo.localhost)
-        const isLocalSubdomain = hostname.endsWith('.localhost');
+    // Step 2: OTP -> Trigger Provisioning -> Move to Setup
+    const handleOtpVerify = async (token: string) => {
+        setVerificationToken(token);
 
-        // Check for production subdomain
-        const isProductionSubdomain = hostname !== baseDomain &&
-            hostname.includes('.') &&
-            hostname !== 'localhost' &&
-            hostname !== '127.0.0.1';
-
-        if (isLocalSubdomain || isProductionSubdomain) {
-            // On subdomain, redirect to signin (staff users don't register)
-            router.replace('/auth/signin');
-        }
-    }, [router]);
-
-    useEffect(() => {
-        if (isLoading) {
-            const interval = setInterval(() => {
-                setMessageIndex((prev) => (prev + 1) % loadingMessages.length);
-            }, 3000); // Change message every 3 seconds
-            return () => clearInterval(interval);
-        }
-    }, [isLoading]);
-
-    async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-        event.preventDefault();
-
-        if (!agreedToTerms) {
-            setError("Please agree to the Terms and Conditions to continue.");
-            return;
-        }
-
-        setIsLoading(true);
-        setError(null);
-        setMessageIndex(0);
-
-        const formData = new FormData(event.currentTarget);
-        const data = {
-            name: formData.get("masjidName"),
-            domain: formData.get("domain"),
-            email: formData.get("email"),
-            password: formData.get("password"),
-        };
-
+        // --- Trigger Backend Provisioning ---
         try {
-            const apiBase = getApiBaseUrl();
+            // Use window.location.origin to ensure we hit the proxy correctly if needed, 
+            // but Next.js usually handles relative paths fine.
 
-            const response = await fetch(`${apiBase}/api/register/`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(data),
+            const payload = {
+                ...formData,
+                verification_token: token,
+                schema_name: formData.domain.replace(/-/g, '_'),
+                name: formData.masjidName
+            };
+
+            const res = await fetch('/api/register/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
             });
 
-            const text = await response.text();
-
-            let result;
-            try {
-                result = JSON.parse(text);
-            } catch (e) {
-                // If it's not JSON, it might be a server 500 html page
-                throw new Error("Server error. Please try again later.");
-            }
-
-            if (!response.ok) {
-                // Make error messages more user-friendly
-                let errorMsg = result.error || "Registration failed";
-                if (errorMsg.includes("Schema")) {
-                    errorMsg = "This Masjid workspace name is already taken. Please choose a different name.";
-                }
-                throw new Error(errorMsg);
-            }
-
-            // Handle 202 Accepted (Async creation)
-            if (response.status === 202) {
-                setSuccessParams({
-                    email: data.email as string,
-                    workspaceUrl: result.tenant_url,
-                    estimatedTime: result.estimated_time
-                });
+            if (res.ok) {
+                const data = await res.json();
+                setTaskId(data.task_id);
+                setLoginUrl(data.login_url);
+                setStep(3);
             } else {
-                // Fallback for sync creation (shouldn't happen with new backend but good for safety)
-                alert(`Masjid account created! Use ${result.tenant_url} to access.`);
-                router.push("/auth/login");
+                const errData = await res.json();
+                alert(errData.error || "Failed to start workspace creation. Please try again.");
             }
 
-        } catch (err) {
-            setError(err instanceof Error ? err.message : "Something went wrong");
-            setIsLoading(false);
+        } catch (e) {
+            console.error("Network error", e);
+            alert("Network error. Please try again.");
         }
-    }
+    };
 
-    // If successfully submitted (Async pending)
-    if (successParams) {
-        return (
-            <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 items-center justify-center p-4">
-                <Card className="w-full max-w-md text-center">
-                    <CardHeader>
-                        <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
-                            <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                        </div>
-                        <CardTitle className="text-2xl font-bold">Registration Accepted!</CardTitle>
-                        <CardDescription>
-                            Your workspace is being created in the background.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                        <div className="bg-blue-50 text-blue-800 p-4 rounded-lg text-sm">
-                            <p className="font-semibold mb-1">Estimated Setup Time: {successParams.estimatedTime}</p>
-                            <p>We are provisioning your secluded database and specialized modules.</p>
-                        </div>
-                        <div className="text-gray-600">
-                            <p>You can close this window.</p>
-                            <p className="mt-2">We will send an email to <strong>{successParams.email}</strong> when <strong>{successParams.workspaceUrl}</strong> is ready.</p>
-                        </div>
-                        <Button className="w-full mt-4" onClick={() => router.push('/')} variant="outline">
-                            Back to Home
-                        </Button>
-                    </CardContent>
-                </Card>
-            </div>
-        )
-    }
-
-    // If Loading (during submission) - Show Creative Messages
-    if (isLoading) {
-        return (
-            <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 items-center justify-center p-4">
-                <Card className="w-full max-w-md text-center py-10">
-                    <CardContent className="space-y-6">
-                        {/* Spinner */}
-                        <div className="relative mx-auto w-16 h-16">
-                            <div className="absolute inset-0 border-4 border-gray-200 rounded-full"></div>
-                            <div className="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
-                        </div>
-
-                        <div className="space-y-2 animate-pulse">
-                            <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                                Setting up your DigitalJamath...
-                            </h3>
-                            <p className="text-blue-600 font-medium h-6 transition-all duration-500 ease-in-out">
-                                {loadingMessages[messageIndex]}
-                            </p>
-                        </div>
-
-                        <p className="text-sm text-gray-500 max-w-xs mx-auto">
-                            This typically takes about 2-3 minutes as we set up your secure, isolated database schema.
-                        </p>
-                    </CardContent>
-                </Card>
-            </div>
-        );
-    }
+    // Step 3: Setup -> Finish
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const handleSetupFinish = (data?: any) => {
+        if (data) setSetupData(data);
+        setStep(4);
+    };
 
     return (
-        <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-gray-950 font-sans">
             {/* Header */}
-            <header className="border-b bg-white dark:bg-gray-950 sticky top-0 z-50">
-                <div className="container mx-auto px-4 lg:px-6 h-16 flex items-center justify-between">
-                    <Link className="flex items-center justify-center font-bold text-xl gap-2" href="/">
-                        <Image src="/logo.png" alt="DigitalJamath Logo" width={32} height={32} className="h-8 w-8" />
-                        DigitalJamath
+            <header className="w-full py-4 px-4 sm:px-6 lg:px-8 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+                <div className="max-w-7xl mx-auto flex items-center justify-between">
+                    <Link href="/" className="flex items-center gap-2 group">
+                        <div className="relative w-8 h-8 sm:w-10 sm:h-10">
+                            <Image
+                                src="/logo.png"
+                                alt="DigitalJamath Logo"
+                                fill
+                                className="object-contain"
+                            />
+                        </div>
+                        <span className="font-bold text-xl tracking-tight text-gray-900 dark:text-gray-100 group-hover:text-blue-600 transition-colors">
+                            DigitalJamath
+                        </span>
                     </Link>
-                    <Link href="/" className="text-sm text-gray-500 hover:text-gray-700">
-                        ← Back to Home
+                    <Link href="/auth/login" className="text-sm font-medium text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors">
+                        Sign in
                     </Link>
                 </div>
             </header>
 
             {/* Main Content */}
-            <main className="flex-1 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-                <Card className="w-full max-w-md">
-                    <CardHeader className="space-y-1">
-                        <CardTitle className="text-2xl font-bold text-center">Register your Masjid</CardTitle>
-                        <CardDescription className="text-center">
-                            Create a new Masjid workspace for your community.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <form onSubmit={handleSubmit} className="space-y-4">
-                            <div className="space-y-2">
-                                <Label htmlFor="masjidName">Masjid Name</Label>
-                                <Input name="masjidName" id="masjidName" placeholder="e.g. Jama Masjid Bangalore" required />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="domain">Workspace URL</Label>
-                                <div className="flex items-center space-x-2">
-                                    <Input name="domain" id="domain" placeholder="jama-blr" required />
-                                    <span className="text-gray-500 text-sm whitespace-nowrap">.{domainSuffix}</span>
-                                </div>
-                                <p className="text-xs text-gray-400">This will be your unique Masjid URL</p>
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="email">Admin Email</Label>
-                                <Input name="email" id="email" type="email" placeholder="admin@masjid.com" required />
-                            </div>
-                            <div className="space-y-2">
-                                <Label htmlFor="password">Password</Label>
-                                <Input name="password" id="password" type="password" required />
-                            </div>
+            <main className="flex-grow flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
+                <div className="sm:mx-auto sm:w-full sm:max-w-md mb-8 text-center">
+                    <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-gray-100">
+                        {step === 4 ? "Finalizing Workspace..." : "Create your DigitalJamath"}
+                    </h2>
+                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                        {step === 1 && "Start your 3-month free trial"}
+                        {step === 2 && "Secure your account"}
+                        {step === 3 && "Customize your experience"}
+                    </p>
+                </div>
 
-                            {/* Terms and Conditions */}
-                            <div className="flex items-start space-x-2">
-                                <Checkbox
-                                    id="terms"
-                                    checked={agreedToTerms}
-                                    onCheckedChange={(checked) => setAgreedToTerms(checked === true)}
+                <div className="sm:mx-auto sm:w-full sm:max-w-md">
+                    <div className="bg-white dark:bg-gray-900 py-8 px-4 shadow-2xl shadow-gray-200/50 dark:shadow-none sm:rounded-xl sm:px-10 border border-gray-100 dark:border-gray-800 relative overflow-hidden">
+
+                        {/* Progress Bar */}
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gray-50 dark:bg-gray-800">
+                            <div
+                                className="h-full bg-blue-600 transition-all duration-500 ease-in-out"
+                                style={{ width: `${(step / 4) * 100}%` }}
+                            />
+                        </div>
+
+                        <div className="mt-6">
+                            {step === 1 && <Step1Identity onNext={handleIdentitySubmit} baseDomain={baseDomain} />}
+                            {step === 2 && (
+                                <Step2OTP
+                                    email={formData.email}
+                                    onNext={handleOtpVerify}
+                                    onBack={() => setStep(1)}
                                 />
-                                <label htmlFor="terms" className="text-sm text-gray-600 leading-tight cursor-pointer">
-                                    I agree to the{" "}
-                                    <Link href="/terms" className="text-blue-600 hover:underline">Terms of Service</Link>
-                                    {" "}and{" "}
-                                    <Link href="/privacy" className="text-blue-600 hover:underline">Privacy Policy</Link>
-                                </label>
-                            </div>
-
-                            {error && <div className="text-red-500 text-sm">{error}</div>}
-                            <Button className="w-full" type="submit" disabled={isLoading}>
-                                Create Masjid Account
-                            </Button>
-                            <div className="text-center text-sm text-gray-500">
-                                Already registered?{" "}
-                                <Link href="/auth/login" className="text-blue-600 hover:underline">
-                                    Sign In
-                                </Link>
-                            </div>
-                        </form>
-                    </CardContent>
-                </Card>
+                            )}
+                            {step === 3 && <Step3Setup onNext={handleSetupFinish} taskId={taskId} />}
+                            {step === 4 && (
+                                <Step4Finalize
+                                    domainPart={formData.domain}
+                                    loginUrl={loginUrl}
+                                    setupData={setupData}
+                                    baseDomain={baseDomain}
+                                    verificationToken={verificationToken}
+                                />
+                            )}
+                        </div>
+                    </div>
+                </div>
             </main>
 
             {/* Footer */}
-            <footer className="border-t bg-white dark:bg-gray-950 py-4">
-                <div className="container mx-auto px-4 text-center text-sm text-gray-500">
-                    <p>© {new Date().getFullYear()} DigitalJamath. Open Source under MIT License.</p>
-                    <p className="text-xs mt-1">Version {APP_VERSION}</p>
+            <footer className="py-6 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 text-sm text-gray-500">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <p>&copy; {new Date().getFullYear()} DigitalJamath. All rights reserved.</p>
+                    <div className="flex items-center gap-6">
+                        <Link href="/terms" className="hover:text-gray-900 dark:hover:text-gray-300 transition-colors">Terms</Link>
+                        <Link href="/privacy" className="hover:text-gray-900 dark:hover:text-gray-300 transition-colors">Privacy</Link>
+                        <span className="text-gray-300 dark:text-gray-700">|</span>
+                        <span className="font-mono text-xs opacity-75">v{APP_VERSION}</span>
+                    </div>
                 </div>
             </footer>
         </div>

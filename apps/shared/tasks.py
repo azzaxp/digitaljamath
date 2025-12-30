@@ -40,7 +40,7 @@ def create_tenant_task(tenant_data):
         # 3. Create Admin User
         with schema_context(tenant.schema_name):
             User.objects.create_user(
-                username='admin',
+                username=email,
                 email=email,
                 password=password,
                 is_staff=True,
@@ -48,18 +48,29 @@ def create_tenant_task(tenant_data):
             )
         logger.info("Admin user created.")
 
-        # 4. Send Verification Email
+        # 4. Send Workspace Ready Email (OTP verification happened before this)
         try:
-            # Need to re-fetch tenant or just use data, but we need the token (Wait, create triggers token generation usually via signals or default?)
-            # shared/models.py isn't visible but based on serializer it has `verification_token`
-            verification_url = f"http://{full_domain}/auth/verify-email?token={tenant.verification_token}"
+            full_url = f"http://{full_domain}/auth/login"
             
             # Use EmailService directly
-            EmailService.send_email_verification(
-                email=email,
-                verification_url=verification_url,
-                masjid_name=tenant.name
+            EmailService.send_email(
+                subject=f"Your Workspace for {tenant.name} is Ready",
+                html_content=f"""
+                <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+                    <h2>Welcome to DigitalJamath</h2>
+                    <p>Assalamu Alaikum,</p>
+                    <p>Your workspace <strong>{tenant.name}</strong> has been successfully created.</p>
+                    <p style="margin: 20px 0;">
+                        <a href="{full_url}" style="background-color: #4F46E5; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
+                            Login to Dashboard
+                        </a>
+                    </p>
+                    <p>You can also access it directly at: <br> <a href="{full_url}">{full_url}</a></p>
+                </div>
+                """,
+                recipient_list=[email]
             )
+            logger.info("Workspace ready email sent.")
             logger.info("Verification email sent.")
             
         except Exception as email_error:

@@ -19,11 +19,16 @@ from apps.jamath.api import (
     UserProfileView, ChangeEmailView, ChangePasswordView,
     # Mizan Ledger
     LedgerViewSet, SupplierViewSet, JournalEntryViewSet, LedgerReportsView,
-    TallyExportView
+    TallyExportView,
+    # RBAC
+    StaffRoleViewSet, StaffMemberViewSet
 )
 
 from apps.welfare.api import VolunteerViewSet, GrantApplicationViewSet
-from apps.shared.api import TenantRegistrationView, FindWorkspaceView, VerifyEmailView, PasswordResetRequestView, PasswordResetConfirmView, TenantInfoView
+from apps.shared.api import    TenantRegistrationView, FindWorkspaceView, VerifyEmailView, CheckTenantView, \
+    RequestRegistrationOTPView, VerifyRegistrationOTPView, SetupTenantView, \
+    PasswordResetRequestView, PasswordResetConfirmView, TenantInfoView
+
 from apps.shared.ai_guide import BasiraGuideView
 from apps.shared.data_agent import BasiraDataAgentView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
@@ -44,6 +49,8 @@ router.register(r'jamath/surveys', SurveyViewSet)
 router.register(r'jamath/responses', SurveyResponseViewSet)
 router.register(r'jamath/announcements', AnnouncementViewSet)
 router.register(r'jamath/service-requests', ServiceRequestViewSet)
+router.register(r'jamath/staff-roles', StaffRoleViewSet)
+router.register(r'jamath/staff-members', StaffMemberViewSet)
 
 # Mizan Ledger (Double-Entry Accounting)
 router.register(r'ledger/accounts', LedgerViewSet)
@@ -59,7 +66,11 @@ urlpatterns = [
     
     # Tenant Registration
     path('api/register/', TenantRegistrationView.as_view(), name='register-tenant'),
+    path('api/register/otp/request/', RequestRegistrationOTPView.as_view(), name='register-otp-request'),
+    path('api/register/otp/verify/', VerifyRegistrationOTPView.as_view(), name='register-otp-verify'),
+    path('api/register/setup/', SetupTenantView.as_view(), name='register-setup'),
     path('api/find-workspace/', FindWorkspaceView.as_view(), name='find-workspace'),
+    path('api/check-tenant/', CheckTenantView.as_view(), name='check-tenant'),
     path('api/verify-email/', VerifyEmailView.as_view(), name='verify-email'),
     path('api/tenant-info/', TenantInfoView.as_view(), name='tenant-info'),
     

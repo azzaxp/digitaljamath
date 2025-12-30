@@ -5,12 +5,22 @@ import { fetchWithAuth } from "@/lib/api";
 
 type Permissions = Record<string, string>; // e.g., { 'finance': 'admin', 'welfare': 'read' }
 
+interface UserProfile {
+    id: number;
+    username: string;
+    email: string;
+    first_name: string;
+    last_name: string;
+    is_superuser: boolean;
+}
+
 interface RbacContextType {
     permissions: Permissions;
     isLoading: boolean;
     hasPermission: (module: string, minLevel?: 'read' | 'write' | 'admin') => boolean;
     refreshPermissions: () => Promise<void>;
     isStaff: boolean;
+    user: UserProfile | null;
 }
 
 const RbacContext = createContext<RbacContextType | undefined>(undefined);
@@ -19,42 +29,19 @@ export function RbacProvider({ children }: { children: React.ReactNode }) {
     const [permissions, setPermissions] = useState<Permissions>({});
     const [isStaff, setIsStaff] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [user, setUser] = useState<UserProfile | null>(null);
 
     const refreshPermissions = async () => {
         try {
-            // We need an endpoint to get "My Privileges".
-            // Since we didn't create a dedicated "me/permissions" endpoint, 
-            // we will fetch the staff member details for the current user.
-            // But we don't have a reliable "me" endpoint for staff details yet...
-            // wait, we can reuse `api/jamath/staff-members/` but filtering for current user?
-            // Or better: Create a tiny helper in `layout.tsx` or here.
-
-            // Actually, for now let's assume if the fetch fails, they have NO permissions.
-            // But how do we get OUR user ID to filter?
-            // The API `AdminPendingMembersView` is not useful here.
-
-            // Let's use a trick: `MemberPortalProfileView` is for Households.
-            // We need a `StaffPortal` or similar.
-
-            // WORKAROUND: I will fetch ALL staff members and filter in JS (Not secure for large orgs but fine for MVP).
-            // BETTER WORKAROUND: I'll add a quick endpoint check to `layout` or assume we can try to access a specific protected route?
-
-            // No, let's just make the /api/jamath/staff-members/ endpoint filterable by `?user=me`.
-            // But I can't edit backend right now easily without context switch.
-
-            // Let's look at `UserProfileView`. It returns user info.
-            // I'll try to fetch `/api/jamath/staff-members/?user_id=${myUserId}`.
-
             // Step 1: Get My Profile to get ID.
             const profileRes = await fetchWithAuth('/api/user/profile/');
             if (!profileRes.ok) throw new Error("Not logged in");
             const profile = await profileRes.json();
+            setUser(profile);
 
             // Superuser Override: Admins see everything
             if (profile.is_superuser) {
                 // Grant all permissions
-                // We use a special flag or just handle it in hasPermission?
-                // Better to handle it here:
                 setPermissions({
                     'finance': 'admin',
                     'welfare': 'admin',
@@ -110,7 +97,7 @@ export function RbacProvider({ children }: { children: React.ReactNode }) {
     };
 
     return (
-        <RbacContext.Provider value={{ permissions, isLoading, hasPermission, refreshPermissions, isStaff }}>
+        <RbacContext.Provider value={{ permissions, isLoading, hasPermission, refreshPermissions, isStaff, user }}>
             {children}
         </RbacContext.Provider>
     );

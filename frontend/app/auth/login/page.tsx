@@ -1,5 +1,5 @@
 "use client";
-import { getDomainSuffix, getBaseDomain, APP_VERSION } from "@/lib/config";
+import { getDomainSuffix, getBaseDomain, APP_VERSION, getApiBaseUrl } from "@/lib/config";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -40,7 +40,7 @@ export default function LoginPage() {
         }
     }, [router]);
 
-    function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         setError(null);
 
@@ -58,19 +58,43 @@ export default function LoginPage() {
 
         setIsLoading(true);
 
-        // Redirect to tenant login page
-        const domainSuffix = getDomainSuffix();
-        const protocol = typeof window !== 'undefined' ? window.location.protocol : 'https:';
+        try {
+            // Check if tenant exists
+            const apiBase = getApiBaseUrl(); // We need to import this
+            const checkResponse = await fetch(`${apiBase}/api/check-tenant/?schema_name=${workspace}`);
 
-        // For localhost, use port 3000
-        let redirectUrl: string;
-        if (domainSuffix === 'localhost') {
-            redirectUrl = `${protocol}//${workspace}.localhost:3000/auth/signin`;
-        } else {
-            redirectUrl = `${protocol}//${workspace}.${domainSuffix}/auth/signin`;
+            if (checkResponse.ok) {
+                const data = await checkResponse.json();
+                if (!data.exists) {
+                    // Tenant does not exist -> Redirect to 404 page
+                    router.push('/not-found');
+                    return;
+                }
+            } else {
+                // API error, maybe handle gracefully or just let it fail to redirect
+                console.error("Failed to check tenant");
+            }
+
+            // Redirect to tenant login page
+            const domainSuffix = getDomainSuffix();
+            const protocol = typeof window !== 'undefined' ? window.location.protocol : 'https:';
+
+            // For localhost, use port 3000 (wait, we removed port 3000 for everything else, 
+            // but for finding workspace we might want to keep standard ports logic.
+            // Actually, based on previous fix, we should use port 80/443 i.e. no port in URL for production/docker)
+            let redirectUrl: string;
+            if (domainSuffix === 'localhost') {
+                redirectUrl = `${protocol}//${workspace}.localhost/auth/signin`;
+            } else {
+                redirectUrl = `${protocol}//${workspace}.${domainSuffix}/auth/signin`;
+            }
+
+            window.location.href = redirectUrl;
+        } catch (err) {
+            console.error("Error checking tenant:", err);
+            setError("Something went wrong. Please try again.");
+            setIsLoading(false);
         }
-
-        window.location.href = redirectUrl;
     }
 
     return (
@@ -107,7 +131,7 @@ export default function LoginPage() {
                                         placeholder="jama-blr"
                                         value={workspace}
                                         onChange={(e) => setWorkspace(e.target.value.toLowerCase())}
-                                        className="rounded-r-none"
+                                        className="rounded-r-none text-right pr-2 placeholder:text-right"
                                         required
                                     />
                                     <span className="inline-flex items-center px-3 h-10 border border-l-0 border-gray-300 bg-gray-100 text-gray-500 text-sm rounded-r-md whitespace-nowrap">

@@ -1,6 +1,6 @@
 # DigitalJamath
 
-![Version](https://img.shields.io/badge/version-1.0.8-alpha-blue)
+![Version](https://img.shields.io/badge/version-1.0.9-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 **DigitalJamath** is an open-source, production-grade SaaS ERP for Indian Masjids, Jamaths, and Welfare organizations. It provides a robust multi-tenant architecture to handle census data, financial management (Baitul Maal), welfare distribution, and community engagement.
@@ -8,6 +8,14 @@
 <p align="center">
   <img src="frontend/public/logo.png" alt="DigitalJamath Logo" width="200" onerror="this.style.display='none'"/>
 </p>
+
+---
+
+## 🆕 What's New in v1.0.9
+- **Interactive Onboarding**: New wizard for registering Masjids with OTP verification and auto-provisioning.
+- **UI Refinements**: Branded registration pages, larger OTP inputs, and copy-paste support.
+- **Login Uniformity**: Standardized alignment of login inputs to match the registration flow.
+- **Chart of Accounts**: Fixed backend seeding logic for standard ledgers.
 
 ---
 

@@ -44,7 +44,14 @@ export const getBaseDomain = () => {
 
     if (typeof window === 'undefined') return 'localhost';
 
-    return window.location.hostname;
+    const hostname = window.location.hostname;
+
+    // Handle localhost subdomains (e.g. tenant.localhost -> localhost)
+    if (hostname.endsWith('.localhost')) {
+        return 'localhost';
+    }
+
+    return hostname;
 };
 
 /**

@@ -124,7 +124,7 @@ export default function SignInPage() {
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="space-y-2">
                                 <Label htmlFor="email">Email / Username</Label>
-                                <Input name="email" id="email" placeholder="admin" required />
+                                <Input name="email" id="email" placeholder="name@example.com" required />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="password">Password</Label>
