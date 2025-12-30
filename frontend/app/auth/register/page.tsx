@@ -1,5 +1,5 @@
 "use client";
-import { getApiBaseUrl } from "@/lib/config";
+import { getApiBaseUrl, getDomainSuffix } from "@/lib/config";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -87,7 +87,7 @@ export default function RegisterPage() {
                             <Label htmlFor="domain">Workspace Domain</Label>
                             <div className="flex items-center space-x-2">
                                 <Input name="domain" id="domain" placeholder="jama-blr" required />
-                                <span className="text-gray-500 text-sm">.digitaljamath.com</span>
+                                <span className="text-gray-500 text-sm">.{getDomainSuffix()}</span>
                             </div>
                         </div>
                         <div className="space-y-2">

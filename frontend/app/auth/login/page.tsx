@@ -1,5 +1,5 @@
 "use client";
-import { getApiBaseUrl } from '@/lib/config';
+import { getApiBaseUrl, getBaseDomain } from '@/lib/config';
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,8 +17,9 @@ export default function LoginPage() {
     // Redirect if on main domain (no subdomain) - protect public schema
     useEffect(() => {
         const hostname = window.location.hostname;
+        const baseDomain = getBaseDomain();
         // Check if it's the main domain (localhost without subdomain, or main production domain)
-        if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === 'digitaljamath.com') {
+        if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === baseDomain) {
             // Redirect to landing page
             router.replace('/');
         }

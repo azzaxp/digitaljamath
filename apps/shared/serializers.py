@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Client, Domain
 from django.db import transaction
+import os
 
 class TenantRegistrationSerializer(serializers.ModelSerializer):
     domain = serializers.CharField()
@@ -29,9 +30,9 @@ class TenantRegistrationSerializer(serializers.ModelSerializer):
             tenant = Client.objects.create(**validated_data)
             
             # Domain Creation
-            # IMPORTANT: For local dev, we append .localhost
-            # In validation we should check this.
-            full_domain = f"{domain_part}.localhost"
+            # Use DOMAIN_NAME from environment, fallback to localhost for dev
+            base_domain = os.environ.get('DOMAIN_NAME', 'localhost')
+            full_domain = f"{domain_part}.{base_domain}"
             
             Domain.objects.create(
                 domain=full_domain,

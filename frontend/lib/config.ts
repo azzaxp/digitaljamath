@@ -20,3 +20,40 @@ export const getApiBaseUrl = () => {
     // Since Nginx proxies /api/ to backend, we can just use the current origin.
     return window.location.origin;
 };
+
+/**
+ * Get the domain suffix for workspace domains.
+ * Configurable via NEXT_PUBLIC_DOMAIN_SUFFIX environment variable.
+ * Falls back to current hostname for self-hosted deployments.
+ */
+export const getDomainSuffix = () => {
+    // Allow override via environment variable
+    if (process.env.NEXT_PUBLIC_DOMAIN_SUFFIX) {
+        return process.env.NEXT_PUBLIC_DOMAIN_SUFFIX;
+    }
+
+    if (typeof window === 'undefined') return 'localhost';
+
+    const hostname = window.location.hostname;
+
+    // For localhost, just show "localhost"
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+        return 'localhost';
+    }
+
+    // For production, use the current domain
+    return hostname;
+};
+
+/**
+ * Get the base domain for redirect checks (main domain without subdomain)
+ */
+export const getBaseDomain = () => {
+    if (process.env.NEXT_PUBLIC_BASE_DOMAIN) {
+        return process.env.NEXT_PUBLIC_BASE_DOMAIN;
+    }
+
+    if (typeof window === 'undefined') return 'localhost';
+
+    return window.location.hostname;
+};
