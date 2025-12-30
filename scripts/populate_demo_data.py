@@ -1,3 +1,11 @@
+import os
+import sys
+import django
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "digitaljamath.settings")
+django.setup()
+
 from django_tenants.utils import schema_context
 from apps.jamath.models import Household, Member, Survey, SurveyResponse
 from apps.finance.models import FundCategory, Transaction, Budget, Asset

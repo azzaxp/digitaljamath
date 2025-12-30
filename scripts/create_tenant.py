@@ -37,5 +37,19 @@ def create_public_tenant():
         
     print("Public Tenant configuration complete (Domains: localhost, 127.0.0.1).")
 
+    # Create Demo Tenant
+    if not Client.objects.filter(schema_name='jama_blr').exists():
+        print("Creating Demo Tenant (jama_blr)...")
+        demo = Client(schema_name='jama_blr', name='Jama Masjid Bangalore')
+        demo.save() # This triggers schema creation and migrations
+        
+        domain = Domain()
+        domain.domain = 'demo.localhost'
+        domain.tenant = demo
+        domain.is_primary = True
+        domain.save()
+        print(f"Demo Tenant created (Domain: demo.localhost)")
+
+
 if __name__ == "__main__":
     create_public_tenant()
