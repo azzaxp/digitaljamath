@@ -26,14 +26,23 @@ export default function SignInPage() {
         // Set the main login URL for "switch workspace" link
         setMainLoginUrl(`${protocol}//${baseDomain}/auth/login`);
 
-        // Check if it's the main domain (no subdomain)
+        // Check for local dev subdomain (e.g., demo.localhost)
+        const isLocalSubdomain = hostname.endsWith('.localhost');
+
+        // If on a local subdomain, extract tenant name and stay
+        if (isLocalSubdomain) {
+            const subdomain = hostname.split('.')[0];
+            setTenantName(subdomain);
+            return;
+        }
+
+        // Check if it's the main domain (no subdomain) - redirect to workspace entry
         if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === baseDomain) {
-            // Redirect to workspace entry page
             router.replace('/auth/login');
             return;
         }
 
-        // Extract subdomain as tenant name
+        // Production subdomain - extract tenant name
         const subdomain = hostname.split('.')[0];
         setTenantName(subdomain);
     }, [router]);
