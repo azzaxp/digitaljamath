@@ -58,9 +58,9 @@ services:
     build:
       context: ./frontend
       args:
-        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
-        NEXT_PUBLIC_DOMAIN_SUFFIX: ${NEXT_PUBLIC_DOMAIN_SUFFIX}
-        NEXT_PUBLIC_BASE_DOMAIN: ${NEXT_PUBLIC_BASE_DOMAIN}
+        NEXT_PUBLIC_API_URL: https://${DOMAIN_NAME}
+        NEXT_PUBLIC_DOMAIN_SUFFIX: ${DOMAIN_NAME}
+        NEXT_PUBLIC_BASE_DOMAIN: ${DOMAIN_NAME}
     container_name: digitaljamath_frontend
     expose:
       - "3000"
