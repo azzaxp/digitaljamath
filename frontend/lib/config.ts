@@ -57,4 +57,4 @@ export const getBaseDomain = () => {
 /**
  * Get the application version
  */
-export const APP_VERSION = process.env.NEXT_PUBLIC_APP_VERSION || '1.1.10 Alpha';
+export const APP_VERSION = process.env.NEXT_PUBLIC_APP_VERSION || '1.1.12-Alpha';

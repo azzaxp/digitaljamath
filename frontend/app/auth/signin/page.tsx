@@ -14,8 +14,7 @@ export default function SignInPage() {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [tenantName, setTenantName] = useState<string>("");
-    const [mainLoginUrl, setMainLoginUrl] = useState<string>("/auth/login");
+    const [isValidTenant, setIsValidTenant] = useState<boolean | null>(null);
 
     // Get tenant name from subdomain and redirect if on main domain
     useEffect(() => {
@@ -28,24 +27,54 @@ export default function SignInPage() {
 
         // Check for local dev subdomain (e.g., demo.localhost)
         const isLocalSubdomain = hostname.endsWith('.localhost');
+        const subdomain = hostname.split('.')[0];
 
         // If on a local subdomain, extract tenant name and stay
         if (isLocalSubdomain) {
-            const subdomain = hostname.split('.')[0];
             setTenantName(subdomain);
+            verifyTenant(subdomain);
             return;
         }
 
         // Check if it's the main domain (no subdomain) - redirect to workspace entry
-        if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === baseDomain) {
+        if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === baseDomain || ['www', 'admin'].includes(subdomain)) {
             router.replace('/auth/login');
             return;
         }
 
         // Production subdomain - extract tenant name
-        const subdomain = hostname.split('.')[0];
         setTenantName(subdomain);
+        verifyTenant(subdomain);
     }, [router]);
+
+    async function verifyTenant(subdomain: string) {
+        try {
+            const apiBase = getApiBaseUrl();
+            const response = await fetch(`${apiBase}/api/tenant-info/`);
+
+            if (!response.ok) {
+                setIsValidTenant(false);
+                return;
+            }
+
+            const data = await response.json();
+
+            // If backend handles unknown domain by falling back to public schema
+            // but the frontend is on a subdomain, then the tenant is invalid.
+            if (data.is_public) {
+                setIsValidTenant(false);
+            } else {
+                setIsValidTenant(true);
+                // Optionally update tenant name from backend
+                if (data.name) setTenantName(data.name);
+            }
+        } catch (err) {
+            console.error("Failed to verify tenant:", err);
+            // On network error, we might want to be lenient or strict. 
+            // Let's be strict for security.
+            setIsValidTenant(false);
+        }
+    }
 
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -85,6 +114,41 @@ export default function SignInPage() {
         } finally {
             setIsLoading(false);
         }
+    }
+
+    // If we're still checking, show nothing or a loader
+    if (isValidTenant === null) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            </div>
+        );
+    }
+
+    // If tenant is invalid, show "Masjid Not Found"
+    if (isValidTenant === false) {
+        return (
+            <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900">
+                <header className="border-b bg-white dark:bg-gray-950 h-16 flex items-center px-4 lg:px-6">
+                    <Link className="flex items-center gap-2 font-bold text-xl" href="/">
+                        <Image src="/logo.png" alt="Logo" width={32} height={32} />
+                        DigitalJamath
+                    </Link>
+                </header>
+                <main className="flex-1 flex flex-col items-center justify-center p-4 text-center">
+                    <h1 className="text-6xl font-extrabold text-blue-600">404</h1>
+                    <h2 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100 mt-4">
+                        Masjid Not Found
+                    </h2>
+                    <p className="text-gray-500 max-w-lg mx-auto mt-2">
+                        The digital jamath portal you are looking for does not exist.
+                    </p>
+                    <Link href="/" className="mt-6">
+                        <Button>Go to Home</Button>
+                    </Link>
+                </main>
+            </div>
+        );
     }
 
     return (
