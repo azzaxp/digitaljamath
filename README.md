@@ -16,10 +16,10 @@
 
 ---
 
-## 🆕 What's New in v1.1.10 Alpha
-- **Interactive Onboarding**: New wizard for registering Masjids with OTP verification and auto-provisioning.
-- **CI/CD Pipeline**: Automated Docker builds via GitHub Actions for fast deployments.
-- **SEO & LLM Ready**: Added `robots.txt`, `sitemap.xml`, and `llm.txt` for search engines and AI agents.
+## 🆕 What's New in v1.1.12 Alpha
+- **Automated CI/CD**: Pushing tags (e.g., `v1.1.12-alpha`) now triggers automated production builds.
+- **Enhanced SEO**: Custom Open Graph and Twitter images for better site previews.
+- **MIT Licensed**: Officially open-sourced under the MIT license.
 
 ---
 
@@ -121,31 +121,35 @@ Access: http://localhost:3000 (frontend) | http://localhost:8000 (backend)
 
 ---
 
-## 📋 Post-Installation
+## 📋 Post-Installation (First-Time Only)
 
-### 1. Seed Chart of Accounts (Required)
+After starting the containers, you must initialize the database and create your first tenant.
 
+### 1. Initialize Database
+Run migrations for the shared (public) tables:
 ```bash
-# Docker
-docker exec -it digitaljamath_web python manage.py tenant_command seed_ledger --schema=<schema_name>
-
-# Development
-python manage.py seed_ledger
+docker exec -it digitaljamath_web python manage.py migrate_schemas --shared
 ```
 
-### 2. Create Admin User
-
+### 2. Create Tenants
+Create the public tenant (for the main site) and your first masjid (e.g., demo):
 ```bash
-# Docker
-docker exec -it digitaljamath_web python manage.py createsuperuser
+# Register main domain
+docker exec -it digitaljamath_web python manage.py create_tenant --schema_name=public --domain_domain=digitaljamath.com --client_name="Digital Ummah"
 
-# Development
-python manage.py createsuperuser
+# Register demo masjid
+docker exec -it digitaljamath_web python manage.py create_tenant --schema_name=demo --domain_domain=demo.digitaljamath.com --client_name="Demo Masjid"
 ```
 
-### 3. Populate Demo Data (Optional)
-
+### 3. Setup Demo Admin & Data
 ```bash
+# Create admin user for demo masjid
+docker exec -it digitaljamath_web python manage.py tenant_command createsuperuser --schema=demo
+
+# Seed finance ledgers (Required)
+docker exec -it digitaljamath_web python manage.py tenant_command seed_ledger --schema=demo
+
+# Populate sample data (Optional)
 docker exec -it digitaljamath_web python scripts/populate_demo_data.py --schema=demo
 ```
 
