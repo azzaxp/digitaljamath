@@ -59,13 +59,20 @@ export default function Step1Identity({ onNext, baseDomain }: Step1Props) {
 
             // 1. Check availability
             const checkRes = await fetch(`${apiBase}/api/check-tenant/?schema_name=${formData.domain.replace(/-/g, '_')}`);
-            if (checkRes.ok) {
-                const checkData = await checkRes.json();
-                if (checkData.exists) {
-                    setError("This workspace domain is already taken.");
-                    setIsLoading(false);
-                    return;
+
+            if (!checkRes.ok) {
+                // If we get a 404, the backend likely doesn't recognize this domain
+                if (checkRes.status === 404) {
+                    throw new Error("API not found. This usually means the domain is not configured on the server yet.");
                 }
+                throw new Error(`Server returned ${checkRes.status}`);
+            }
+
+            const checkData = await checkRes.json();
+            if (checkData.exists) {
+                setError("This workspace domain is already taken.");
+                setIsLoading(false);
+                return;
             }
 
             // 2. Request OTP
@@ -79,14 +86,22 @@ export default function Step1Identity({ onNext, baseDomain }: Step1Props) {
             });
 
             if (!otpRes.ok) {
-                const otpData = await otpRes.json();
-                throw new Error(otpData.error || "Failed to send verification code.");
+                let otpError = "Failed to send verification code.";
+                try {
+                    const otpData = await otpRes.json();
+                    otpError = otpData.error || otpError;
+                } catch (e) {
+                    // Not JSON (likely HTML error page)
+                    if (otpRes.status === 404) otpError = "Registration API endpoint not found.";
+                }
+                throw new Error(otpError);
             }
 
             // Success -> Next Step
             onNext(formData);
 
         } catch (err: any) {
+            console.error("Registration Step 1 Error:", err);
             setError(err.message || "Something went wrong.");
         } finally {
             setIsLoading(false);
