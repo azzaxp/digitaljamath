@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | DigitalJamath</title>
+    <meta name="description"
+        content="Learn about the Digital Ummah Foundation and our mission to modernize masjid management through open-source technology.">
+    <meta name="keywords"
+        content="Digital Ummah Foundation, about DigitalJamath, masjid software, Islamic community, open source">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="About Us | DigitalJamath">
+    <meta property="og:description"
+        content="Learn about the Digital Ummah Foundation and our mission to modernize masjid management.">
+    <meta property="og:image" content="/assets/og-image.png">
+    <meta property="og:url" content="https://digitaljamath.com/about">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="About Us | DigitalJamath">
+    <meta name="twitter:description"
+        content="Learn about the Digital Ummah Foundation and our mission to modernize masjid management.">
+    <meta name="twitter:image" content="/assets/og-image.png">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://digitaljamath.com/about">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="icon" href="/assets/icon.png" type="image/png">
+    <link rel="stylesheet" href="/styles.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-content">
+            <a href="/" class="logo">
+                <img src="/assets/icon.png" alt="DigitalJamath" width="32" height="32">
+                <span>DigitalJamath</span>
+            </a>
+            <nav class="nav-desktop">
+                <a href="/about" class="active">About</a>
+                <a href="/#features">Features</a>
+                <a href="https://github.com/digitaljamath/digitaljamath" target="_blank">GitHub</a>
+                <span class="nav-divider"></span>
+                <a href="/auth/find-workspace" class="btn btn-outline">Find My Masjid</a>
+            </nav>
+            <button class="menu-toggle" aria-label="Toggle menu" onclick="toggleMenu()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <nav class="nav-mobile" id="mobileNav">
+            <a href="/about">About</a>
+            <a href="/#features">Features</a>
+            <a href="https://github.com/digitaljamath/digitaljamath" target="_blank">GitHub</a>
+            <a href="/auth/find-workspace" class="btn btn-primary">Find My Masjid</a>
+        </nav>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>About Us</h1>
+        </div>
+    </section>
+
+    <!-- Origin Story Section -->
+    <section class="about-story">
+        <div class="container">
+            <div class="story-content">
+                <h2 class="gradient-text">Empowering the Heart of the Community</h2>
+                <div class="story-text">
+                    <p class="lead">Masjids have always been the center of our social fabric. However, the tools we use
+                        to manage them haven't kept pace with the times. While the world runs on data and automation,
+                        our institutions often struggle with manual processes.</p>
+                    <p class="highlight">Enter DigitalJamath.</p>
+                    <p>We exist to bridge the gap between traditional values and modern efficiency. We believe that
+                        managing the affairs of the Ummah requires more than just sincerity; it requires precision,
+                        transparency, and accountability.</p>
+                </div>
+            </div>
+
+            <div class="mission-cards">
+                <div class="mission-card">
+                    <div class="mission-icon blue">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />
+                        </svg>
+                    </div>
+                    <h3>Modernize Infrastructure</h3>
+                    <p>Replacing fragmented paper trails and Excel sheets with secure, centralized cloud solutions.</p>
+                </div>
+                <div class="mission-card">
+                    <div class="mission-icon purple">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                            <path d="m9 12 2 2 4-4" />
+                        </svg>
+                    </div>
+                    <h3>Ensure Transparency</h3>
+                    <p>Creating audit-ready financial tools that build trust with every transaction.</p>
+                </div>
+                <div class="mission-card">
+                    <div class="mission-icon green">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+                            <polyline points="16 7 22 7 22 13" />
+                        </svg>
+                    </div>
+                    <h3>Optimize Impact</h3>
+                    <p>Using AI to help committees make data-driven decisions for the community's benefit.</p>
+                </div>
+            </div>
+
+            <div class="story-quote">
+                <p>"At DigitalJamath, we are ensuring that the institutions carrying the community's trust have the
+                    technology to support it."</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="team-section">
+        <div class="container">
+            <h2>The Team</h2>
+            <div class="team-card">
+                <div class="team-avatar">AZ</div>
+                <div class="team-info">
+                    <h3>Mohammed Azzan Patni</h3>
+                    <p class="team-role">Founder & Lead Volunteer</p>
+                    <p class="team-desc"><strong>Role:</strong> Entrepreneur, Founder & Product Manager</p>
+                    <p class="team-bio">Azzan is bootstrapping the Digital Ummah Foundation to bridge the gap between
+                        modern technology and the local Jamath. He believes the Ummah doesn't just need more donations;
+                        it needs better systems.</p>
+                    <p class="team-status">Current Status: Volunteering part-time on this project and actively seeking
+                        Code Contributors who want to turn their GitHub commits into Sadaqah Jariyah.</p>
+                    <a href="https://linkedin.com/in/azzaxp" target="_blank" class="team-link">Connect on LinkedIn →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Join Movement Section -->
+    <section class="join-section">
+        <div class="container">
+            <h2>Your Code can be a Service</h2>
+            <p class="join-subtitle">DigitalJamath is 100% Open Source. We are looking for:</p>
+
+            <div class="join-roles">
+                <div class="join-role">
+                    <h4 class="green">Django Developers</h4>
+                    <p>To build the compliance engine.</p>
+                </div>
+                <div class="join-role">
+                    <h4 class="purple">React Wizards</h4>
+                    <p>To craft accessible UIs for our elders.</p>
+                </div>
+                <div class="join-role">
+                    <h4 class="red">Reviewers & Testers</h4>
+                    <p>To hunt bugs, verify releases, and ensure stability.</p>
+                </div>
+                <div class="join-role">
+                    <h4 class="amber">Shariah Analysts</h4>
+                    <p>To help us verify financial logic and Zakat calculations.</p>
+                </div>
+            </div>
+
+            <a href="https://github.com/digitaljamath/digitaljamath" target="_blank" class="btn btn-white btn-lg">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 8px;">
+                    <path
+                        d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                </svg>
+                Contribute on GitHub
+            </a>
+            <p class="join-note">Whether you write code, design UIs, or just understand the problems of a local Masjid,
+                there is a place for you here.</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <h4>Digital Ummah Foundation</h4>
+                    <p>Mangaluru, India (The Silicon Beach of India)</p>
+                </div>
+                <div>
+                    <h4>Contact</h4>
+                    <ul>
+                        <li>General: <a href="mailto:salam@digitaljamath.com">salam@digitaljamath.com</a></li>
+                        <li>Contributors: <a href="mailto:contribute@digitaljamath.com">contribute@digitaljamath.com</a>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h4>Legal</h4>
+                    <nav>
+                        <a href="/terms">Terms of Service</a>
+                        <a href="/privacy">Privacy Policy</a>
+                    </nav>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2025 DigitalJamath. Open Source under MIT License.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            const nav = document.getElementById('mobileNav');
+            nav.classList.toggle('open');
+        }
+    </script>
+</body>
+
+</html>
