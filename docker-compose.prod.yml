@@ -9,6 +9,7 @@ services:
       - "80:80"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/landing:/usr/share/nginx/landing:ro
     depends_on:
       - frontend
       - web
