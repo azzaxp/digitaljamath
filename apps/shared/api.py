@@ -342,7 +342,12 @@ class PasswordResetRequestView(generics.GenericAPIView):
         with schema_context(tenant.schema_name):
             try:
                 user = User.objects.get(email=email)
-                send_password_reset_email(user, tenant.domains.first().domain)
+                try:
+                    send_password_reset_email(user, tenant.domains.first().domain)
+                except Exception as e:
+                    print(f"Failed to send password reset email: {e}")
+                    # Return 200 even if email fails, to avoid enumeration and panic
+                    pass
                 return Response({"message": "Password reset email sent."}, status=status.HTTP_200_OK)
             except User.DoesNotExist:
                  return Response({"message": "Password reset email sent."}, status=status.HTTP_200_OK)
