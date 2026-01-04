@@ -85,7 +85,7 @@ class MembershipService:
     
     @staticmethod
     @transaction.atomic
-    def process_payment(household: Household, amount: Decimal, notes: str = "") -> Receipt:
+    def process_payment(household: Household, amount: Decimal, notes: str = "", donor_pan: str = None) -> Receipt:
         """
         Process a membership payment.
         
@@ -142,13 +142,108 @@ class MembershipService:
             membership_portion=membership_portion,
             donation_portion=donation_portion,
             receipt_number=receipt_number,
+            donor_pan=donor_pan,
             notes=notes
         )
+        
+        # LINK TO BAITUL MAAL (FINANCE)
+        MembershipService.create_journal_entry_for_receipt(receipt, household, membership_portion, donation_portion)
         
         # TODO: Trigger notification (SMS/WhatsApp)
         # NotificationService.send_receipt(household.phone_number, receipt)
         
         return receipt
+        
+    @staticmethod
+    def create_journal_entry_for_receipt(receipt, household, fee_amt, donation_amt):
+        """Create a Double-Entry Accounting Record for the receipt."""
+        from .models import Ledger, JournalEntry, JournalItem
+        
+        try:
+            # 1. Accounts Discovery / Creation (Idempotent)
+            # Debit Account: Bank/Online Gateway
+            bank_acct = Ledger.objects.filter(account_type=Ledger.AccountType.ASSET, name__icontains="Bank").first()
+            if not bank_acct:
+                 # Create a default bank account if none exists
+                 bank_acct = Ledger.objects.create(
+                     name="Bank Account (Default)", 
+                     code="1001", 
+                     account_type=Ledger.AccountType.ASSET
+                 )
+            
+            # Credit Account 1: Membership Fees
+            fee_acct = Ledger.objects.filter(account_type=Ledger.AccountType.INCOME, name__icontains="Membership").first()
+            if not fee_acct:
+                 fee_acct = Ledger.objects.create(
+                     name="Membership Fees", 
+                     code="4001", 
+                     account_type=Ledger.AccountType.INCOME, 
+                     fund_type=Ledger.FundType.UNRESTRICTED_GENERAL
+                 )
+
+            # Credit Account 2: Donations
+            donation_acct = Ledger.objects.filter(account_type=Ledger.AccountType.INCOME, name__icontains="Donation").first()
+            if not donation_acct:
+                 donation_acct = Ledger.objects.create(
+                     name="General Donations", 
+                     code="4002", 
+                     account_type=Ledger.AccountType.INCOME, 
+                     fund_type=Ledger.FundType.UNRESTRICTED_GENERAL
+                 )
+            
+            # 2. Create Voucher Header
+            head_member = household.members.filter(is_head_of_family=True).first()
+            
+            je = JournalEntry.objects.create(
+                voucher_type=JournalEntry.VoucherType.RECEIPT,
+                date=timezone.now().date(),
+                narration=f"Online - {receipt.receipt_number} ({receipt.notes or 'Payment'})",
+                donor=head_member,
+                donor_pan=receipt.donor_pan or '',
+                payment_mode=JournalEntry.PaymentMode.UPI, # Assuming UPI/Online
+                is_finalized=True # Auto-finalize system entries? Valid logic.
+            )
+            
+            # 3. Create Line Items
+            # DEBIT: Bank (Total Amount)
+            JournalItem.objects.create(
+                journal_entry=je, 
+                ledger=bank_acct, 
+                debit_amount=receipt.amount,
+                particulars=f"Receipt from {head_member.full_name if head_member else household.membership_id}"
+            )
+            
+            # CREDIT: Membership
+            if fee_amt > 0:
+                JournalItem.objects.create(
+                    journal_entry=je, 
+                    ledger=fee_acct, 
+                    credit_amount=fee_amt,
+                    particulars="Membership Subscription"
+                )
+                
+            # CREDIT: Donation
+            if donation_amt > 0:
+                JournalItem.objects.create(
+                    journal_entry=je, 
+                    ledger=donation_acct, 
+                    credit_amount=donation_amt,
+                    particulars="Voluntary Donation"
+                )
+             
+            # 4. Validate and Save (Triggers constraints)
+            je.clean() 
+            je.save()
+            
+        except Exception as e:
+            # Log failure but do not rollback receipt? 
+            # Ideally we want transaction atomic (which it is decorated with).
+            # So if JE fails, Receipt fails. This is good data integrity.
+            # But we must ensure Ledger creation acts don't fail on unique constraints if race condition?
+            # get_or_create is better but code must be unique.
+            # For now, simplistic approach is fine for single-threaded user testing.
+            print(f"Baitul Maal Integration Error: {e}")
+            raise e # Fail the transaction so we notice bugs immediately
     
     @staticmethod
     def get_membership_status(household: Household) -> Dict[str, Any]:

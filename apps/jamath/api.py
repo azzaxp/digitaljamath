@@ -111,7 +111,11 @@ class MembershipConfigSerializer(serializers.ModelSerializer):
     class Meta:
         model = MembershipConfig
         fields = ['id', 'cycle', 'minimum_fee', 'currency', 'membership_id_prefix', 
-                  'household_label', 'member_label', 'masjid_name', 'is_active']
+                  'household_label', 'member_label', 'masjid_name', 'is_active',
+                  'payment_gateway_provider', 'razorpay_key_id', 'razorpay_key_secret',
+                  'cashfree_app_id', 'cashfree_secret_key',
+                  'organization_name', 'organization_address', 'organization_pan', 'registration_number_80g',
+                  'telegram_enabled', 'telegram_auto_reminders', 'telegram_notify_profile_updates', 'telegram_notify_announcements']
 
 
 # ============================================================================
@@ -222,7 +226,7 @@ class JournalEntrySerializer(serializers.ModelSerializer):
 # ============================================================================
 
 # In-memory OTP store (use Redis in production)
-_otp_store = {}
+from django.core.cache import cache
 
 
 class RequestOTPView(APIView):
@@ -230,6 +234,9 @@ class RequestOTPView(APIView):
     permission_classes = [AllowAny]
     
     def post(self, request):
+        from django.db import connection
+        from apps.shared.telegram import send_otp_via_telegram, is_demo_tenant
+        
         phone = request.data.get('phone_number')
         
         if not phone:
@@ -243,20 +250,36 @@ class RequestOTPView(APIView):
                 'error': 'Number not registered with Jamath. Please contact Admin.'
             }, status=404)
         
-        # Generate OTP
-        otp = str(random.randint(100000, 999999))
-        _otp_store[phone] = {
+        # Generate OTP - Demo tenant uses fixed OTP, production uses random
+        if is_demo_tenant():
+            otp = '123456'  # Fixed OTP for demo
+        else:
+            otp = str(random.randint(100000, 999999))
+        
+        # Store OTP
+        cache.set(f"otp:{phone}", {
             'otp': otp,
             'household_id': household.id,
             'expires': timezone.now() + timezone.timedelta(minutes=5)
-        }
+        }, timeout=300)
         
-        # Send OTP (mock for now)
-        NotificationService.send_otp(phone, otp)
+        # Send OTP
+        if is_demo_tenant():
+            # Demo: Don't actually send, just store
+            pass
+        else:
+            # Production: Send via Telegram
+            result = send_otp_via_telegram(phone, otp)
+            if not result.get('success'):
+                return Response({
+                    'error': result.get('error', 'Failed to send OTP'),
+                    'telegram_link_required': 'telegram_link_required' not in result.get('error', '').lower()
+                }, status=400)
         
         return Response({
             'message': 'OTP sent successfully',
-            'phone': phone[-4:]  # Show only last 4 digits
+            'phone': phone[-4:],  # Show only last 4 digits
+            'demo': is_demo_tenant()
         })
 
 
@@ -271,7 +294,7 @@ class VerifyOTPView(APIView):
         if not phone or not otp:
             return Response({'error': 'Phone and OTP are required'}, status=400)
         
-        stored = _otp_store.get(phone)
+        stored = cache.get(f"otp:{phone}")
         
         if not stored:
             return Response({'error': 'OTP expired or not found'}, status=400)
@@ -283,7 +306,7 @@ class VerifyOTPView(APIView):
         
         if stored['expires'] < timezone.now():
              if otp != '123456' or phone != '+919876543210': # Magic OTP never expires
-                 del _otp_store[phone]
+                 cache.delete(f"otp:{phone}")
                  return Response({'error': 'OTP expired'}, status=400)
         
         # Get household
@@ -306,7 +329,7 @@ class VerifyOTPView(APIView):
         refresh = RefreshToken.for_user(user)
         
         # Cleanup
-        del _otp_store[phone]
+        cache.delete(f"otp:{phone}")
         
         return Response({
             'access': str(refresh.access_token),
@@ -581,6 +604,200 @@ class ServiceRequestViewSet(viewsets.ModelViewSet):
 
 
 # ============================================================================
+# PAYMENT API
+# PAYMENT API
+# PAYMENT API
+class PortalPaymentOrderView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        import razorpay
+        import requests
+        import uuid
+        
+        # Get Tenant Config
+        config = MembershipConfig.objects.filter(is_active=True).first()
+        if not config:
+             return Response({'error': 'Membership config missing'}, status=400)
+             
+        provider = config.payment_gateway_provider
+        
+        if provider == MembershipConfig.GatewayProvider.NONE:
+             return Response({'error': 'Online payments are currently disabled.'}, status=400)
+
+        amount = request.data.get('amount')
+        if not amount or float(amount) < 1:
+             return Response({'error': 'Invalid amount'}, status=400)
+             
+        # 1. RAZORPAY FLOW
+        if provider == MembershipConfig.GatewayProvider.RAZORPAY:
+            if not config.razorpay_key_id:
+                return Response({'error': 'Razorpay not configured'}, status=400)
+                
+            client = razorpay.Client(auth=(config.razorpay_key_id, config.razorpay_key_secret))
+            try:
+                payment = client.order.create({'amount': int(float(amount) * 100), 'currency': config.currency, 'payment_capture': '1'})
+                return Response({
+                    'provider': 'RAZORPAY',
+                    'order_id': payment['id'],
+                    'amount': payment['amount'],
+                    'currency': payment['currency'],
+                    'key_id': config.razorpay_key_id
+                })
+            except Exception as e:
+                return Response({'error': str(e)}, status=500)
+
+        # 2. CASHFREE FLOW
+        elif provider == MembershipConfig.GatewayProvider.CASHFREE:
+            if not config.cashfree_app_id:
+                return Response({'error': 'Cashfree not configured'}, status=400)
+            
+            # Use Sandbox for Development (User requested test creds context)
+            # Ideally use a toggle. Defaulting to SANDBOX. 
+            base_url = "https://sandbox.cashfree.com/pg"
+            
+            headers = {
+                "x-client-id": config.cashfree_app_id,
+                "x-client-secret": config.cashfree_secret_key,
+                "x-api-version": "2023-08-01",
+                "Content-Type": "application/json"
+            }
+            
+            # Get User Info
+            username = request.user.username
+            phone = "9999999999" # Default
+            if username.startswith('member_'):
+                 try:
+                     hid = int(username.split('_')[1])
+                     h = Household.objects.get(id=hid)
+                     if h.phone_number:
+                         phone = h.phone_number
+                 except:
+                     pass
+            
+            customer_id = f"cust_{username}"
+            order_id = f"order_{uuid.uuid4().hex[:10]}"
+            
+            # Extract PAN from request to embed in Return URL (for persistence across redirect)
+            donor_pan = request.data.get('donor_pan', '')
+            
+            payload = {
+                "order_amount": float(amount),
+                "order_currency": config.currency,
+                "customer_details": {
+                    "customer_id": customer_id,
+                    "customer_phone": phone,
+                    "customer_name": request.user.first_name or username
+                },
+                "order_meta": {
+                    "return_url": f"http://localhost:3000/portal/dashboard?order_id={order_id}&pan={donor_pan}"
+                }
+            }
+            
+            try:
+                resp = requests.post(f"{base_url}/orders", json=payload, headers=headers)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    return Response({
+                        'provider': 'CASHFREE',
+                        'payment_session_id': data['payment_session_id'],
+                        'order_id': data['order_id'],
+                        'env': 'SANDBOX'
+                    })
+                else:
+                    return Response({'error': f"Cashfree Error: {resp.text}"}, status=400)
+            except Exception as e:
+                return Response({'error': str(e)}, status=500)
+                
+        return Response({'error': 'Invalid Provider'}, status=400)
+
+
+class PortalPaymentVerifyView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        import razorpay
+        import requests
+        
+        config = MembershipConfig.objects.filter(is_active=True).first()
+        if not config:
+             return Response({'error': 'Config missing'}, status=400)
+             
+        data = request.data
+        provider = config.payment_gateway_provider
+        
+        # Get Household
+        username = request.user.username
+        household = None
+        if username.startswith('member_'):
+             try:
+                 household_id = int(username.split('_')[1])
+                 household = Household.objects.get(id=household_id)
+             except:
+                 pass
+        
+        if not household:
+            return Response({'error': 'Invalid member session'}, status=400)
+
+        # 1. RAZORPAY VERIFY
+        if provider == MembershipConfig.GatewayProvider.RAZORPAY:
+            try:
+                 client = razorpay.Client(auth=(config.razorpay_key_id, config.razorpay_key_secret))
+                 params_dict = {
+                     'razorpay_order_id': data.get('razorpay_order_id'),
+                     'razorpay_payment_id': data.get('razorpay_payment_id'),
+                     'razorpay_signature': data.get('razorpay_signature')
+                 }
+                 client.utility.verify_payment_signature(params_dict)
+                 
+                 amount = Decimal(str(data.get('amount')))
+                 donor_pan = data.get('donor_pan')
+                 receipt = MembershipService.process_payment(
+                     household, 
+                     amount, 
+                     notes=f"Razorpay: {data.get('razorpay_payment_id')}",
+                     donor_pan=donor_pan
+                 )
+                 return Response({'status': 'success', 'receipt': receipt.receipt_number})
+            except Exception as e:
+                 return Response({'error': str(e)}, status=400)
+                 
+        # 2. CASHFREE VERIFY
+        elif provider == MembershipConfig.GatewayProvider.CASHFREE:
+            order_id = data.get('order_id')
+            if not order_id:
+                return Response({'error': 'Order ID missing'}, status=400)
+                
+            base_url = "https://sandbox.cashfree.com/pg"
+            headers = {
+                "x-client-id": config.cashfree_app_id,
+                "x-client-secret": config.cashfree_secret_key,
+                "x-api-version": "2023-08-01"
+            }
+            
+            try:
+                resp = requests.get(f"{base_url}/orders/{order_id}", headers=headers)
+                if resp.status_code == 200:
+                    order_data = resp.json()
+                    if order_data.get('order_status') == 'PAID':
+                        amount = Decimal(str(order_data.get('order_amount')))
+                        donor_pan = data.get('donor_pan')
+                        receipt = MembershipService.process_payment(
+                             household, 
+                             amount, 
+                             notes=f"Cashfree: {order_id}",
+                             donor_pan=donor_pan
+                        )
+                        return Response({'status': 'success', 'receipt': receipt.receipt_number})
+                    else:
+                        return Response({'error': f"Payment status: {order_data.get('order_status')}"}, status=400)
+                else:
+                    return Response({'error': "Failed to verify with Cashfree"}, status=400)
+            except Exception as e:
+                return Response({'error': str(e)}, status=500)
+
+        return Response({'error': 'Provider mismatch'}, status=400)
+
 # USER PROFILE API
 # ============================================================================
 
@@ -664,6 +881,84 @@ class ChangePasswordView(APIView):
         user.set_password(new_password)
         user.save()
         return Response({'message': 'Password changed successfully'})
+
+
+# ============================================================================
+# TELEGRAM NOTIFICATION APIs
+# ============================================================================
+
+class TelegramBroadcastAnnouncementView(APIView):
+    """Broadcast an announcement to all Telegram-linked members."""
+    permission_classes = [IsAdminUser]
+    
+    def post(self, request):
+        from apps.shared.telegram import broadcast_announcement
+        
+        title = request.data.get('title')
+        content = request.data.get('content')
+        
+        if not title or not content:
+            return Response({'error': 'Title and content are required'}, status=400)
+        
+        result = broadcast_announcement(title, content)
+        return Response({
+            'message': f"Announcement sent to {result['sent']} members",
+            'sent': result['sent'],
+            'failed': result['failed']
+        })
+
+
+class TelegramPaymentRemindersView(APIView):
+    """Send payment reminders to all pending households with linked Telegram."""
+    permission_classes = [IsAdminUser]
+    
+    def post(self, request):
+        from apps.shared.telegram import send_bulk_payment_reminders
+        
+        portal_url = request.data.get('portal_url')
+        result = send_bulk_payment_reminders(portal_url)
+        
+        return Response({
+            'message': f"Reminders sent to {result['sent']} households",
+            'sent': result['sent'],
+            'failed': result['failed'],
+            'skipped': result['skipped']
+        })
+
+
+class TelegramStatsView(APIView):
+    """Get Telegram linking stats for the tenant."""
+    permission_classes = [IsAdminUser]
+    
+    def get(self, request):
+        from apps.jamath.models import TelegramLink, Household
+        
+        total_households = Household.objects.count()
+        linked_count = TelegramLink.objects.filter(is_verified=True).count()
+        pending_renewals = Household.objects.filter(is_membership_active=False).count()
+        
+        return Response({
+            'total_households': total_households,
+            'telegram_linked': linked_count,
+            'pending_renewals': pending_renewals,
+            'link_percentage': round((linked_count / total_households * 100) if total_households else 0, 1)
+        })
+
+
+class TelegramIndividualReminderView(APIView):
+    """Send payment reminder to a specific household."""
+    permission_classes = [IsAdminUser]
+    
+    def post(self, request, household_id):
+        from apps.shared.telegram import send_individual_reminder
+        
+        portal_url = request.data.get('portal_url')
+        result = send_individual_reminder(household_id, portal_url)
+        
+        if result['success']:
+            return Response({'message': 'Reminder sent successfully'})
+        else:
+            return Response({'error': result['error']}, status=400)
 
 
 # ============================================================================
@@ -991,4 +1286,142 @@ class TallyExportView(APIView):
             content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         )
         response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        return response
+
+
+# ============================================================================
+# RECEIPT PDF GENERATION
+# ============================================================================
+
+class ReceiptPDFView(APIView):
+    """Generate PDF receipt for a journal entry (admin) or by receipt ID."""
+    permission_classes = [IsAdminUser]
+    
+    def get(self, request, entry_id):
+        from apps.jamath.receipt_generator import generate_receipt_pdf
+        
+        try:
+            entry = JournalEntry.objects.get(id=entry_id)
+        except JournalEntry.DoesNotExist:
+            return Response({'error': 'Journal entry not found'}, status=404)
+        
+        # Only receipts can generate PDFs
+        if entry.voucher_type != 'RECEIPT':
+            return Response({'error': 'Only receipt vouchers can generate PDFs'}, status=400)
+        
+        # Get organization config
+        config = MembershipConfig.objects.filter(is_active=True).first()
+        
+        # Calculate amount from journal items (credit side)
+        amount = sum(item.credit_amount for item in entry.items.all())
+        
+        # Generate receipt number if not exists
+        receipt_number = f"RCP-{entry.date.strftime('%Y%m%d')}-{entry.id:04d}"
+        
+        # Generate PDF
+        pdf_bytes = generate_receipt_pdf(
+            receipt_number=receipt_number,
+            payment_date=entry.date,
+            donor_name=entry.donor_name or entry.narration or "Member",
+            donor_address="",
+            donor_pan=entry.donor_pan or "",
+            amount=amount,
+            membership_portion=amount,  # Can be split if needed
+            donation_portion=0,
+            payment_mode=entry.payment_mode or "Online",
+            org_name=config.organization_name if config else "Digital Jamath",
+            org_address=config.organization_address if config else "",
+            org_pan=config.organization_pan if config else "",
+            reg_80g=config.registration_number_80g if config else "",
+            masjid_name=config.masjid_name if config else "",
+        )
+        
+        response = HttpResponse(pdf_bytes, content_type='application/pdf')
+        response['Content-Disposition'] = f'inline; filename="Receipt_{receipt_number}.pdf"'
+        return response
+
+
+class PortalReceiptListView(APIView):
+    """List receipts for the logged-in household (portal)."""
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        # Get household from session
+        household_id = request.session.get('portal_household_id')
+        if not household_id:
+            return Response({'error': 'Not authenticated as household'}, status=401)
+        
+        try:
+            household = Household.objects.get(id=household_id)
+        except Household.DoesNotExist:
+            return Response({'error': 'Household not found'}, status=404)
+        
+        # Find receipt entries for this household
+        entries = JournalEntry.objects.filter(
+            voucher_type='RECEIPT',
+            household=household
+        ).order_by('-date')
+        
+        receipts = []
+        for entry in entries:
+            amount = sum(item.credit_amount for item in entry.items.all())
+            receipts.append({
+                'id': entry.id,
+                'receipt_number': f"RCP-{entry.date.strftime('%Y%m%d')}-{entry.id:04d}",
+                'date': entry.date.isoformat(),
+                'amount': float(amount),
+                'description': entry.narration,
+                'payment_mode': entry.payment_mode or 'Online',
+            })
+        
+        return Response(receipts)
+
+
+class PortalReceiptPDFView(APIView):
+    """Download PDF receipt for portal user."""
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, entry_id):
+        from apps.jamath.receipt_generator import generate_receipt_pdf
+        
+        # Verify household access
+        household_id = request.session.get('portal_household_id')
+        if not household_id:
+            return Response({'error': 'Not authenticated as household'}, status=401)
+        
+        try:
+            entry = JournalEntry.objects.get(id=entry_id, household_id=household_id)
+        except JournalEntry.DoesNotExist:
+            return Response({'error': 'Receipt not found'}, status=404)
+        
+        if entry.voucher_type != 'RECEIPT':
+            return Response({'error': 'Invalid receipt'}, status=400)
+        
+        # Get organization config
+        config = MembershipConfig.objects.filter(is_active=True).first()
+        household = entry.household
+        head = household.members.filter(is_head_of_family=True).first() if household else None
+        
+        amount = sum(item.credit_amount for item in entry.items.all())
+        receipt_number = f"RCP-{entry.date.strftime('%Y%m%d')}-{entry.id:04d}"
+        
+        pdf_bytes = generate_receipt_pdf(
+            receipt_number=receipt_number,
+            payment_date=entry.date,
+            donor_name=head.full_name if head else entry.donor_name or "Member",
+            donor_address=household.address if household else "",
+            donor_pan=entry.donor_pan or "",
+            amount=amount,
+            membership_portion=amount,
+            donation_portion=0,
+            payment_mode=entry.payment_mode or "Online",
+            org_name=config.organization_name if config else "Digital Jamath",
+            org_address=config.organization_address if config else "",
+            org_pan=config.organization_pan if config else "",
+            reg_80g=config.registration_number_80g if config else "",
+            masjid_name=config.masjid_name if config else "",
+        )
+        
+        response = HttpResponse(pdf_bytes, content_type='application/pdf')
+        response['Content-Disposition'] = f'inline; filename="Receipt_{receipt_number}.pdf"'
         return response

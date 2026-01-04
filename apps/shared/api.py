@@ -1,5 +1,8 @@
 from rest_framework import viewsets, generics, status
 from rest_framework.response import Response
+from rest_framework.throttling import AnonRateThrottle
+import requests
+from django.conf import settings
 from .models import Client, Domain
 from .serializers import TenantRegistrationSerializer
 from django_tenants.utils import schema_context
@@ -7,11 +10,58 @@ from django.contrib.auth.models import User
 import random
 from django.utils import timezone
 from rest_framework.views import APIView
+from .email_service import EmailService
+
+
+# Custom throttle for Find Workspace API - prevents email enumeration attacks
+class FindWorkspaceThrottle(AnonRateThrottle):
+    rate = '100/hour'  # Increased for development (was 5/hour)
+
+
+# Registration throttles - prevent abuse of registration flow
+class OTPRequestThrottle(AnonRateThrottle):
+    rate = '100/hour'  # Increased for development (was 3/hour)
+
+
+class CheckTenantThrottle(AnonRateThrottle):
+    rate = '100/hour'  # Increased for development (was 10/hour)
+
+
+class RegistrationThrottle(AnonRateThrottle):
+    rate = '100/hour'  # Increased for development (was 5/hour)
+
+
+def verify_recaptcha(token: str) -> bool:
+    """Verify reCAPTCHA v3 token with Google's API."""
+    # Skip verification in DEBUG mode (development)
+    if getattr(settings, 'DEBUG', False):
+        return True
+    
+    secret_key = getattr(settings, 'RECAPTCHA_SECRET_KEY', None)
+    if not secret_key:
+        # If no secret key configured, skip verification
+        return True
+    
+    try:
+        response = requests.post(
+            'https://www.google.com/recaptcha/api/siteverify',
+            data={
+                'secret': secret_key,
+                'response': token
+            },
+            timeout=5
+        )
+        result = response.json()
+        # reCAPTCHA v3 returns a score (0.0 to 1.0), require at least 0.5
+        return result.get('success', False) and result.get('score', 0) >= 0.5
+    except Exception:
+        return False
 
 class TenantRegistrationView(generics.CreateAPIView):
     queryset = Client.objects.all()
     serializer_class = TenantRegistrationSerializer
-    permission_classes = [] # Allow anyone to register
+    permission_classes = []  # Allow anyone to register
+    throttle_classes = [RegistrationThrottle]  # Rate limit: 5/hour per IP
     
     def post(self, request, *args, **kwargs):
         # 1. Validate Data
@@ -56,24 +106,44 @@ class TenantRegistrationView(generics.CreateAPIView):
             'domain_part': domain_part,
             'email': data['email'],
             'password': data['password'],
+            'setup_type': request.data.get('setup_type', 'standard'),  # standard or custom
         }
 
-        # 5. Trigger Async Task
+        # 5. Trigger Task (Async if Celery is running, Sync for local dev)
         from .tasks import create_tenant_task
-        task_result = create_tenant_task.delay(task_data)
-        
-        # 6. Return Task ID for polling
+        from django.conf import settings
         import os
+        
         base_domain = os.environ.get('DOMAIN_NAME', 'localhost')
         full_domain = f"{domain_part}.{base_domain}"
         
-        return Response({
-            "message": "Workspace creation started.",
-            "status": "pending",
-            "task_id": task_result.id,
-            "tenant_url": f"http://{full_domain}/",
-            "login_url": f"http://{full_domain}/auth/login"
-        }, status=status.HTTP_202_ACCEPTED)
+        # In DEBUG mode or when CELERY_SYNC=True, run synchronously
+        if settings.DEBUG or os.environ.get('CELERY_SYNC', 'false').lower() == 'true':
+            # Run synchronously for local development
+            try:
+                result = create_tenant_task(task_data)
+                return Response({
+                    "message": "Workspace created successfully.",
+                    "status": "SUCCESS",
+                    "task_id": "sync-task",
+                    "tenant_url": result.get('tenant_url', f"http://{full_domain}/"),
+                    "login_url": result.get('login_url', f"http://{full_domain}/auth/login")
+                }, status=status.HTTP_201_CREATED)
+            except Exception as e:
+                return Response({
+                    "error": str(e),
+                    "status": "FAILURE"
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        else:
+            # Run async via Celery in production
+            task_result = create_tenant_task.delay(task_data)
+            return Response({
+                "message": "Workspace creation started.",
+                "status": "pending",
+                "task_id": task_result.id,
+                "tenant_url": f"http://{full_domain}/",
+                "login_url": f"http://{full_domain}/auth/login"
+            }, status=status.HTTP_202_ACCEPTED)
 
 # In-memory OTP store for Registration
 _reg_otp_store = {}
@@ -81,6 +151,7 @@ _reg_otp_store = {}
 class RequestRegistrationOTPView(APIView):
     """Send OTP to email for registration."""
     permission_classes = []
+    throttle_classes = [OTPRequestThrottle]  # Rate limit: 3/hour per IP
 
     def post(self, request):
         email = request.data.get('email')
@@ -139,12 +210,12 @@ class VerifyRegistrationOTPView(APIView):
             return Response({'error': 'OTP expired or not found'}, status=400)
             
         if stored['otp'] != otp:
-             # Magic OTP for dev
-             if otp != '112233':
+             # Magic OTP for dev ONLY (disabled in production)
+             if not (settings.DEBUG and otp == '112233'):
                  return Response({'error': 'Invalid OTP'}, status=400)
                  
         if stored['expires'] < timezone.now():
-             if otp != '112233':
+             if not (settings.DEBUG and otp == '112233'):
                  del _reg_otp_store[email]
                  return Response({'error': 'OTP expired'}, status=400)
         
@@ -153,8 +224,8 @@ class VerifyRegistrationOTPView(APIView):
         signer = Signer()
         verification_token = signer.sign(email)
         
-        # Clear OTP
-        if otp != '112233':
+        # Clear OTP (don't clear if using magic OTP in debug)
+        if not (settings.DEBUG and otp == '112233'):
             del _reg_otp_store[email]
             
         return Response({
@@ -164,29 +235,53 @@ class VerifyRegistrationOTPView(APIView):
 
 
 class FindWorkspaceView(generics.GenericAPIView):
+    """
+    Find Masjid API with security protections:
+    - Rate limiting (5 requests/hour per IP)
+    - reCAPTCHA v3 verification
+    - Email confirmation (sends login info via email, no direct data return)
+    """
     permission_classes = []
+    throttle_classes = [FindWorkspaceThrottle]
     
     def post(self, request, *args, **kwargs):
         email = request.data.get('email')
+        captcha_token = request.data.get('captcha_token')
+        
         if not email:
             return Response({"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST)
-            
+        
+        # Verify reCAPTCHA (if configured)
+        if not verify_recaptcha(captcha_token or ''):
+            return Response(
+                {"error": "Security verification failed. Please try again."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Find workspaces for this email
         clients = Client.objects.filter(owner_email__iexact=email)
         
-        if not clients.exists():
-            return Response({"workspaces": []}, status=status.HTTP_200_OK)
+        if clients.exists():
+            results = []
+            for client in clients:
+                domain = client.domains.filter(is_primary=True).first()
+                if domain:
+                    protocol = 'https' if not settings.DEBUG else 'http'
+                    results.append({
+                        "name": client.name,
+                        "url": f"{protocol}://{domain.domain}/",
+                        "login_url": f"{protocol}://{domain.domain}/auth/login"
+                    })
             
-        results = []
-        for client in clients:
-            domain = client.domains.filter(is_primary=True).first()
-            if domain:
-                results.append({
-                    "name": client.name,
-                    "url": f"http://{domain.domain}/",
-                    "login_url": f"http://{domain.domain}/auth/login"
-                })
-                
-        return Response({"workspaces": results}, status=status.HTTP_200_OK)
+            # Send email with workspace info instead of returning directly
+            if results:
+                EmailService.send_workspace_login_info(email, results)
+        
+        # Always return same success message to prevent email enumeration
+        return Response({
+            "success": True,
+            "message": "If an account exists with this email, you will receive login information shortly."
+        }, status=status.HTTP_200_OK)
 
 class TenantInfoView(generics.GenericAPIView):
     permission_classes = []
@@ -196,10 +291,12 @@ class TenantInfoView(generics.GenericAPIView):
         if tenant.schema_name == 'public':
             return Response({"name": "DigitalJamath", "is_public": True})
         
+        from django.conf import settings
         return Response({
             "name": tenant.name,
             "schema_name": tenant.schema_name,
-            "is_public": False
+            "is_public": False,
+            "telegram_bot_username": settings.TELEGRAM_BOT_USERNAME
         })
 
 from .utils import send_verification_email, send_password_reset_email
@@ -276,6 +373,7 @@ class PasswordResetConfirmView(generics.GenericAPIView):
 
 class CheckTenantView(generics.GenericAPIView):
     permission_classes = []
+    throttle_classes = [CheckTenantThrottle]  # Rate limit: 10/hour per IP
 
     def get(self, request):
         schema_name = request.query_params.get('schema_name')
@@ -286,8 +384,33 @@ class CheckTenantView(generics.GenericAPIView):
         return Response({"exists": exists}, status=status.HTTP_200_OK)
 
 class SetupTenantView(APIView):
+    """Check registration task status or apply setup configuration."""
     authentication_classes = []
     permission_classes = []
+
+    def get(self, request):
+        """Poll for Celery task status (provisioning progress)."""
+        task_id = request.query_params.get('task_id')
+        if not task_id:
+            return Response({'error': 'task_id is required'}, status=400)
+        
+        from celery.result import AsyncResult
+        result = AsyncResult(task_id)
+        
+        response_data = {
+            'task_id': task_id,
+            'status': result.status,
+        }
+        
+        if result.status == 'SUCCESS':
+            # Task completed - return login URL
+            task_result = result.result or {}
+            response_data['login_url'] = task_result.get('login_url', '')
+            response_data['tenant_url'] = task_result.get('tenant_url', '')
+        elif result.status == 'FAILURE':
+            response_data['error'] = str(result.result)
+        
+        return Response(response_data)
 
     def post(self, request):
         token = request.data.get('verification_token')

@@ -12,7 +12,11 @@ from apps.jamath.api import (
     # Member Portal
     MemberPortalProfileView, MemberPortalReceiptsView, 
     MemberPortalAnnouncementsView, MemberPortalServiceRequestView,
+    MemberPortalProfileView, MemberPortalReceiptsView, 
+    MemberPortalAnnouncementsView, MemberPortalServiceRequestView,
     MemberPortalMemberView,
+    # Payment
+    PortalPaymentOrderView, PortalPaymentVerifyView,
     # Admin
     AdminPendingMembersView, AdminMembershipConfigView,
     # User Profile
@@ -21,7 +25,11 @@ from apps.jamath.api import (
     LedgerViewSet, SupplierViewSet, JournalEntryViewSet, LedgerReportsView,
     TallyExportView,
     # RBAC
-    StaffRoleViewSet, StaffMemberViewSet
+    StaffRoleViewSet, StaffMemberViewSet,
+    # Telegram
+    TelegramBroadcastAnnouncementView, TelegramPaymentRemindersView, TelegramStatsView, TelegramIndividualReminderView,
+    # Receipts PDF
+    ReceiptPDFView, PortalReceiptListView, PortalReceiptPDFView
 )
 
 from apps.welfare.api import VolunteerViewSet, GrantApplicationViewSet
@@ -89,7 +97,16 @@ urlpatterns = [
     path('api/portal/receipts/', MemberPortalReceiptsView.as_view(), name='portal-receipts'),
     path('api/portal/announcements/', MemberPortalAnnouncementsView.as_view(), name='portal-announcements'),
     path('api/portal/service-requests/', MemberPortalServiceRequestView.as_view(), name='portal-service-requests'),
+    path('api/portal/service-requests/', MemberPortalServiceRequestView.as_view(), name='portal-service-requests'),
     path('api/portal/members/', MemberPortalMemberView.as_view(), name='portal-members'),
+    
+    # Member Portal Payment
+    path('api/portal/payment/create-order/', PortalPaymentOrderView.as_view(), name='portal-payment-create'),
+    path('api/portal/payment/verify/', PortalPaymentVerifyView.as_view(), name='portal-payment-verify'),
+    
+    # Member Portal Receipts (new)
+    path('api/portal/receipts/list/', PortalReceiptListView.as_view(), name='portal-receipts-list'),
+    path('api/portal/receipts/<int:entry_id>/pdf/', PortalReceiptPDFView.as_view(), name='portal-receipt-pdf'),
     
     # Admin (Zimmedar) APIs
     path('api/admin/pending-members/', AdminPendingMembersView.as_view(), name='admin-pending-members'),
@@ -103,6 +120,13 @@ urlpatterns = [
     # Mizan Ledger Reports
     path('api/ledger/reports/<str:report_type>/', LedgerReportsView.as_view(), name='ledger-reports'),
     path('api/ledger/export/', TallyExportView.as_view(), name='ledger-export'),
+    path('api/ledger/receipt/<int:entry_id>/pdf/', ReceiptPDFView.as_view(), name='admin-receipt-pdf'),
+    
+    # Telegram Notifications
+    path('api/telegram/broadcast/', TelegramBroadcastAnnouncementView.as_view(), name='telegram-broadcast'),
+    path('api/telegram/payment-reminders/', TelegramPaymentRemindersView.as_view(), name='telegram-reminders'),
+    path('api/telegram/stats/', TelegramStatsView.as_view(), name='telegram-stats'),
+    path('api/telegram/remind/<int:household_id>/', TelegramIndividualReminderView.as_view(), name='telegram-remind-individual'),
     
     # Basira AI Guide
     path('api/basira/', BasiraGuideView.as_view(), name='basira-guide'),

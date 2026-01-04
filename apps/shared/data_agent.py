@@ -211,13 +211,14 @@ You have access to LIVE DATA from the system. When answering questions, use the 
 ## GUIDELINES:
 1. Answer questions using ONLY the data provided above.
 2. Be specific with numbers - don't round unless asked.
-3. If asked about something not in your context, say "I don't have that data available."
+3. If the data shows 0 or empty lists for a requested metric, explicitly state "I don't have that data available" or "There are currently zero records for..." as appropriate.
 4. Format currency in Indian Rupees (₹).
 5. For lists, use bullet points or tables.
 6. Be concise but thorough.
 7. If someone asks to search for a household, use the search results provided.
 
 ## IMPORTANT:
+- If the context shows 0 households, 0 members, etc., DO NOT make up data. State clearly that the database is empty.
 - You cannot modify data, only read it.
 - For sensitive actions, direct users to the appropriate dashboard section.
 - If asked unrelated questions (politics, coding, etc.), politely refuse.
@@ -240,7 +241,7 @@ class BasiraDataAgentView(APIView):
         api_key = config.openrouter_api_key or os.environ.get('OPENROUTER_API_KEY')
 
         if not api_key:
-            return Response({'error': 'API key not configured'}, status=200)
+            return Response({'error': 'API key not configured. Please set OPENROUTER_API_KEY.'}, status=503)
 
         # Build data context based on the query
         data_context = self._build_data_context(user_message)

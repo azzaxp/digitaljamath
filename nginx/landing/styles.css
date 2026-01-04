@@ -1216,6 +1216,352 @@ ul {
     text-decoration: underline;
 }
 
-.prose strong {
+/* Onboarding (Find Masjid / Register) */
+.onboarding-main {
+    padding: 2rem 0;
+    min-height: calc(100vh - 4rem - 3rem);
+    /* viewport - header - footer */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.onboarding-card {
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: 1rem;
+    padding: 2rem;
+    max-width: 28rem;
+    width: 100%;
+    margin: 0 auto;
+    box-shadow: var(--shadow-lg);
+}
+
+.register-card {
+    max-width: 28rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
     color: var(--gray-900);
+}
+
+.card-header p {
+    color: var(--gray-500);
+    font-size: 0.875rem;
+    margin-bottom: 2rem;
+}
+
+.onboarding-form .form-group {
+    margin-bottom: 1.25rem;
+}
+
+.onboarding-form label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: var(--gray-700);
+}
+
+.onboarding-form input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--gray-300);
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.onboarding-form input:focus {
+    outline: none;
+    border-color: var(--blue-600);
+    box-shadow: 0 0 0 4px var(--blue-100);
+}
+
+.input-with-suffix {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--gray-300);
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+.input-with-suffix input {
+    border: none;
+    border-radius: 0;
+}
+
+.input-suffix {
+    background: var(--gray-50);
+    color: var(--gray-500);
+    padding: 0 1rem;
+    font-size: 0.875rem;
+    border-left: 1px solid var(--gray-200);
+}
+
+.form-help {
+    font-size: 0.75rem;
+    color: var(--gray-400);
+    margin-top: 0.5rem;
+}
+
+.error-text {
+    color: var(--red-600);
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+}
+
+.hidden {
+    display: none;
+}
+
+.onboarding-footer {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--gray-100);
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--gray-500);
+}
+
+.onboarding-footer a,
+.btn-link {
+    color: var(--blue-600);
+    font-weight: 500;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.onboarding-footer a:hover {
+    text-decoration: underline;
+}
+
+/* Progress Bar */
+.progress-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--gray-100);
+}
+
+.progress-bar {
+    height: 100%;
+    background: var(--blue-600);
+    transition: width 0.3s ease;
+}
+
+/* Workspaces Grid */
+.workspaces-grid {
+    display: grid;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+}
+
+.workspace-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    border: 1px solid var(--gray-200);
+    border-radius: 0.75rem;
+    transition: all 0.2s;
+}
+
+.workspace-card:hover {
+    background: var(--gray-50);
+    border-color: var(--blue-600);
+}
+
+.workspace-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.workspace-name {
+    font-weight: 600;
+    color: var(--gray-900);
+}
+
+.workspace-url {
+    font-size: 0.75rem;
+    color: var(--gray-400);
+}
+
+/* Provisioning View */
+.loading-spinner-container {
+    padding: 2rem 0;
+}
+
+.spinner {
+    width: 3rem;
+    height: 3rem;
+    border: 4px solid var(--gray-200);
+    border-top-color: var(--blue-600);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+}
+
+.status-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: var(--gray-300);
+}
+
+.status-dot.success {
+    background: var(--green-500);
+}
+
+/* Success State */
+.success-icon {
+    margin-bottom: 1rem;
+}
+
+.success-url-box {
+    background: var(--blue-50);
+    color: var(--blue-700);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    font-family: monospace;
+    font-weight: 600;
+    margin-bottom: 2rem;
+}
+/* Sticky Footer for Onboarding Pages */
+body.bg-gray-50 {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+body.bg-gray-50 .onboarding-main {
+    flex: 1;
+}
+
+body.bg-gray-50 .footer {
+    margin-top: auto;
+    padding: 1rem 0;
+    background: var(--gray-50);
+    border-top: 1px solid var(--gray-200);
+}
+
+/* Utility Classes */
+.bg-gray-50 {
+    background: var(--gray-50);
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-sm {
+    font-size: 0.875rem;
+}
+
+.text-gray-400 {
+    color: var(--gray-400);
+}
+
+.text-gray-500 {
+    color: var(--gray-500);
+}
+
+.mt-4 {
+    margin-top: 1rem;
+}
+
+.mt-6 {
+    margin-top: 1.5rem;
+}
+
+.mt-8 {
+    margin-top: 2rem;
+}
+
+.mb-6 {
+    margin-bottom: 1.5rem;
+}
+
+.mb-8 {
+    margin-bottom: 2rem;
+}
+
+.mx-2 {
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+}
+
+/* Right-aligned subdomain input */
+.input-with-suffix input {
+    text-align: right;
+    flex: 1;
+}
+
+.input-with-suffix input:focus {
+    box-shadow: none;
+}
+
+/* Onboarding page footer - sticky at bottom */
+.onboarding-footer-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid var(--gray-200);
+    padding: 1rem 0;
+    z-index: 50;
+}
+
+.onboarding-footer-bar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    color: var(--gray-500);
+}
+
+.onboarding-footer-bar .footer-links {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.onboarding-footer-bar .footer-links a {
+    color: var(--gray-600);
+}
+
+.onboarding-footer-bar .footer-links a:hover {
+    color: var(--blue-600);
+}
+
+.onboarding-footer-bar .version {
+    color: var(--gray-400);
+}
+
+/* Adjust main content to account for fixed footer */
+body.bg-gray-50 {
+    padding-bottom: 4rem;
 }

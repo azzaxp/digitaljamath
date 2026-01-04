@@ -219,6 +219,66 @@ class EmailService:
         return success_count
 
 
+
+    @classmethod
+    def send_workspace_login_info(cls, email: str, workspaces: list) -> bool:
+        """Send email with workspace login URLs (for Find My Masjid)."""
+        if not workspaces:
+            return True  # Don't send if no workspaces
+            
+        workspace_list = ""
+        for ws in workspaces:
+            workspace_list += f"""
+                <tr>
+                    <td style="padding: 15px; border-bottom: 1px solid #e2e8f0;">
+                        <strong style="color: #1e40af;">{ws['name']}</strong><br>
+                        <a href="{ws['login_url']}" style="color: #3b82f6;">{ws['url']}</a>
+                    </td>
+                    <td style="padding: 15px; border-bottom: 1px solid #e2e8f0; text-align: right;">
+                        <a href="{ws['login_url']}" style="background: #3b82f6; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px;">Login</a>
+                    </td>
+                </tr>
+            """
+        
+        subject = "Your DigitalJamath Masjid Login Information"
+        html_content = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body {{ font-family: 'Segoe UI', Arial, sans-serif; line-height: 1.6; color: #333; }}
+                .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+                .header {{ background: linear-gradient(135deg, #3b82f6, #4f46e5); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }}
+                .content {{ background: #f8fafc; padding: 30px; border: 1px solid #e2e8f0; }}
+                .workspace-table {{ width: 100%; border-collapse: collapse; margin: 20px 0; background: white; border-radius: 8px; overflow: hidden; }}
+                .footer {{ text-align: center; color: #64748b; font-size: 12px; padding: 20px; }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>Your Masjid Workspaces</h1>
+                </div>
+                <div class="content">
+                    <p>Assalamu Alaikum,</p>
+                    <p>You requested your Masjid workspace login information. Here are the workspaces associated with <strong>{email}</strong>:</p>
+                    <table class="workspace-table">
+                        {workspace_list}
+                    </table>
+                    <p>Click the <strong>Login</strong> button to access your Masjid dashboard.</p>
+                    <p>If you did not request this, please ignore this email.</p>
+                    <p>JazakAllah Khair,<br>DigitalJamath Team</p>
+                </div>
+                <div class="footer">
+                    <p>This is an automated message from DigitalJamath - Digital Ummah Foundation</p>
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+        return cls.send_email(subject, html_content, [email])
+
+
 # Convenience functions for backward compatibility
 def send_password_reset_email(email: str, reset_url: str, user_name: str = "User") -> bool:
     return EmailService.send_password_reset(email, reset_url, user_name)

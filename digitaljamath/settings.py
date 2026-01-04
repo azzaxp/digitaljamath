@@ -13,6 +13,26 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-replace-this-with-a-s
 DEBUG = os.environ.get('DEBUG', 'True').lower() in ('true', '1', 'yes')
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(BASE_DIR, 'django_cache'),
+    }
+}
+
+# reCAPTCHA v3 Configuration (for Find Masjid API protection)
+# Get keys from: https://www.google.com/recaptcha/admin
+RECAPTCHA_SECRET_KEY = os.environ.get('RECAPTCHA_SECRET_KEY', None)
+
+# Telegram Bot Configuration (for Member Portal OTP)
+# Get token from @BotFather
+TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN', None)
+TELEGRAM_BOT_USERNAME = os.environ.get('TELEGRAM_BOT_USERNAME', 'DigitalJamathBot')
+
+# Razorpay Configuration
+RAZORPAY_KEY_ID = os.environ.get('RAZORPAY_KEY_ID', None)
+RAZORPAY_KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET', None)
+
 
 # Application definition
 SHARED_APPS = (
@@ -161,6 +181,7 @@ CORS_ALLOWED_ORIGINS = [
 # Allow all subdomains (e.g. demo.digitaljamath.com)
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https://.*\.digitaljamath\.com$",
+    r"^http://.*\.localhost:3000$",
 ]
 
 CORS_ALLOW_CREDENTIALS = True

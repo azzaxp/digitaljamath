@@ -146,6 +146,27 @@ class MembershipConfig(models.Model):
     minimum_fee = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('1200.00'))
     currency = models.CharField(max_length=5, default='INR')
     
+    # Payment Gateway Configuration (Tenant Specific)
+    class GatewayProvider(models.TextChoices):
+        RAZORPAY = 'RAZORPAY', 'Razorpay'
+        CASHFREE = 'CASHFREE', 'Cashfree Payments'
+        NONE = 'NONE', 'None'
+
+    payment_gateway_provider = models.CharField(max_length=20, choices=GatewayProvider.choices, default=GatewayProvider.NONE)
+    
+    # Razorpay Keys
+    razorpay_key_id = models.CharField(max_length=50, blank=True, default='')
+    razorpay_key_secret = models.CharField(max_length=50, blank=True, default='')
+    
+    cashfree_app_id = models.CharField(max_length=100, blank=True, default='')
+    cashfree_secret_key = models.CharField(max_length=100, blank=True, default='')
+    
+    # Organization Details for Receipts (80G)
+    organization_name = models.CharField(max_length=200, default='Digital Jamath', help_text="Legal Name for Receipts")
+    organization_address = models.TextField(blank=True, help_text="Registered Address")
+    organization_pan = models.CharField(max_length=20, blank=True, help_text="Organization PAN")
+    registration_number_80g = models.CharField(max_length=100, blank=True, help_text="80G Registration Number")
+    
     # ID Prefix Configuration
     membership_id_prefix = models.CharField(max_length=10, default='JM-', help_text="Prefix for auto-generated membership IDs")
     
@@ -153,6 +174,12 @@ class MembershipConfig(models.Model):
     household_label = models.CharField(max_length=50, default='Gharane', help_text="Display label for households (e.g., Gharane, Families, Khandan)")
     member_label = models.CharField(max_length=50, default='Afrad', help_text="Display label for members (e.g., Afrad, Members)")
     masjid_name = models.CharField(max_length=100, default='', blank=True, help_text="Display name for the masjid")
+    
+    # Telegram Notification Settings
+    telegram_enabled = models.BooleanField(default=True, help_text="Enable Telegram notifications")
+    telegram_auto_reminders = models.BooleanField(default=False, help_text="Automatically send payment reminders (via cron)")
+    telegram_notify_profile_updates = models.BooleanField(default=True, help_text="Notify members when their profile is updated")
+    telegram_notify_announcements = models.BooleanField(default=False, help_text="Auto-broadcast announcements when published")
     
     is_active = models.BooleanField(default=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -204,6 +231,7 @@ class Receipt(models.Model):
     donation_portion = models.DecimalField(max_digits=10, decimal_places=2, help_text="Voluntary extra as Sadaqah")
     payment_date = models.DateTimeField(auto_now_add=True)
     receipt_number = models.CharField(max_length=50, unique=True)
+    donor_pan = models.CharField(max_length=15, blank=True, null=True, help_text="For 80G Compliance")
     pdf_url = models.URLField(null=True, blank=True)
     notes = models.TextField(null=True, blank=True)
 
@@ -543,3 +571,20 @@ class StaffMember(models.Model):
         return f"{self.user.username} - {self.designation}"
 
 
+# ============================================================================
+# TELEGRAM INTEGRATION
+# ============================================================================
+
+class TelegramLink(models.Model):
+    """Links a phone number to a Telegram chat_id for OTP delivery."""
+    phone_number = models.CharField(max_length=20, unique=True, primary_key=True)
+    chat_id = models.CharField(max_length=50)
+    linked_at = models.DateTimeField(auto_now_add=True)
+    is_verified = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = "Telegram Link"
+        verbose_name_plural = "Telegram Links"
+
+    def __str__(self):
+        return f"{self.phone_number} → {self.chat_id}"

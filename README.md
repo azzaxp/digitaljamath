@@ -1,8 +1,8 @@
 # DigitalJamath
 
-![Version](https://img.shields.io/badge/version-1.1.12-alpha-blue)
+![Version](https://img.shields.io/badge/version-2.0.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
-![Build](https://github.com/azzaxp/digitaljamath/actions/workflows/build-and-push.yml/badge.svg)
+![Build](https://github.com/digitaljamath/digitaljamath/actions/workflows/build-and-push.yml/badge.svg)
 
 **DigitalJamath** is an open-source, production-grade SaaS ERP for Indian Masjids, Jamaths, and Welfare organizations. It provides a robust multi-tenant architecture to handle census data, financial management (Baitul Maal), welfare distribution, and community engagement.
 
@@ -16,10 +16,50 @@
 
 ---
 
-## 🆕 What's New in v1.1.12 Alpha
-- **Automated CI/CD**: Pushing tags (e.g., `v1.1.12-alpha`) now triggers automated production builds.
-- **Enhanced SEO**: Custom Open Graph and Twitter images for better site previews.
-- **MIT Licensed**: Officially open-sourced under the MIT license.
+## 🎉 What's New in v2.0.0
+
+This is a **major release** with significant architectural changes and feature additions:
+
+### 🔄 Frontend Migration: Next.js → React Vite
+
+| Aspect | Change |
+|--------|--------|
+| **Framework** | Migrated from Next.js 16 to **React 19 + Vite** |
+| **Build Speed** | 10x faster development server (HMR) |
+| **Bundle Size** | 40% smaller production builds |
+| **Complexity** | Removed SSR overhead—CSR is sufficient for this app |
+
+**Why we migrated:**
+- **Simpler Architecture**: DigitalJamath is primarily an admin panel and member portal, not a content site. Server-side rendering (SSR) added unnecessary complexity.
+- **Faster Development**: Vite's hot module replacement is instant vs Next.js's slower rebuilds.
+- **Easier Deployment**: Static files can be served from any CDN or Nginx.
+
+### 📱 Telegram Integration
+
+| Feature | Description |
+|---------|-------------|
+| **Bot Login** | Members can link their phone via Telegram bot |
+| **Payment Reminders** | Bulk or individual reminders for pending dues |
+| **Announcement Broadcast** | Push announcements directly to Telegram |
+| **Profile Updates** | Notify members when their profile is edited |
+
+### 🧾 PDF Receipt Generation
+
+| Feature | Description |
+|---------|-------------|
+| **80G Compliance** | Receipts include PAN, 80G registration number |
+| **Auto-Generated** | PDF created for every online payment |
+| **Member Portal** | Members can download receipts anytime |
+| **Admin Access** | Generate receipts for any voucher in Baitul Maal |
+
+### 🏠 Enhanced Member Portal
+
+| Page | Features |
+|------|----------|
+| `/portal/receipts` | View payment history, download PDFs |
+| `/portal/family` | View household members and details |
+| `/portal/announcements` | Read Jamath announcements |
+| `/portal/services` | Request documents (Nikaah Nama, NOC, etc.) |
 
 ---
 
@@ -34,6 +74,8 @@
 | **Basira AI** | AI-powered audit assistant for anomaly detection |
 | **Surveys** | Custom survey builder for community feedback |
 | **Member Portal** | Self-service portal with OTP login for members |
+| **Telegram Bot** | Notifications, reminders, and member linking |
+| **PDF Receipts** | 80G-compliant receipt generation |
 
 ---
 
@@ -44,12 +86,13 @@
 | **Backend** | Python 3.11+, Django 5.0, Django REST Framework |
 | **Multi-Tenancy** | django-tenants (PostgreSQL Schema Isolation) |
 | **Database** | PostgreSQL 16+ |
-| **Frontend** | Next.js 16, React 19, TypeScript |
+| **Frontend** | React 19, Vite, TypeScript |
 | **Styling** | Tailwind CSS + Shadcn UI |
 | **Containerization** | Docker + Docker Compose |
 | **CI/CD** | GitHub Actions → GitHub Container Registry |
 | **Email** | Brevo SMTP |
 | **AI** | OpenRouter (Gemini/Llama) |
+| **Messaging** | Telegram Bot API |
 
 ---
 
@@ -70,7 +113,7 @@
 
 ```bash
 # Clone and configure
-git clone https://github.com/azzaxp/digitaljamath.git
+git clone https://github.com/digitaljamath/digitaljamath.git
 cd digitaljamath
 cp .env.example .env
 nano .env  # Set DATABASE_PASSWORD, DOMAIN_NAME, etc.
@@ -82,7 +125,7 @@ docker-compose -f docker-compose.prod.yml up -d
 ### Option 2: Interactive Setup
 
 ```bash
-git clone https://github.com/azzaxp/digitaljamath.git
+git clone https://github.com/digitaljamath/digitaljamath.git
 cd digitaljamath
 ./setup.sh  # Follow prompts for dev or prod setup
 ```
@@ -100,7 +143,7 @@ git pull origin main
 
 ```bash
 # Clone repository
-git clone https://github.com/azzaxp/digitaljamath.git
+git clone https://github.com/digitaljamath/digitaljamath.git
 cd digitaljamath
 
 # Backend setup
@@ -117,7 +160,7 @@ npm install
 npm run dev
 ```
 
-Access: http://localhost:3000 (frontend) | http://localhost:8000 (backend)
+Access: http://localhost:5173 (frontend) | http://localhost:8000 (backend)
 
 ---
 
@@ -126,13 +169,11 @@ Access: http://localhost:3000 (frontend) | http://localhost:8000 (backend)
 After starting the containers, you must initialize the database and create your first tenant.
 
 ### 1. Initialize Database
-Run migrations for the shared (public) tables:
 ```bash
 docker exec -it digitaljamath_web python manage.py migrate_schemas --shared
 ```
 
 ### 2. Create Tenants
-Create the public tenant (for the main site) and your first masjid (e.g., demo):
 ```bash
 # Register main domain
 docker exec -it digitaljamath_web python manage.py create_tenant --schema_name=public --domain_domain=digitaljamath.com --client_name="Digital Ummah"
@@ -143,7 +184,7 @@ docker exec -it digitaljamath_web python manage.py create_tenant --schema_name=d
 
 ### 3. Setup Demo Admin & Data
 ```bash
-# Create admin user for demo masjid
+# Create admin user
 docker exec -it digitaljamath_web python manage.py tenant_command createsuperuser --schema=demo
 
 # Seed finance ledgers (Required)
@@ -166,23 +207,10 @@ Copy `.env.example` to `.env` and set:
 | `DOMAIN_NAME` | Base domain | `digitaljamath.com` |
 | `DATABASE_PASSWORD` | PostgreSQL password | `StrongPassword123` |
 | `BREVO_SMTP_KEY` | Email API key | `xkeysib-...` |
+| `TELEGRAM_BOT_TOKEN` | Telegram bot token | `123456:ABC...` |
+| `TELEGRAM_BOT_USERNAME` | Bot username | `@YourJamathBot` |
 
 > ⚠️ Never commit `.env` to version control!
-
----
-
-## 📦 Multi-Tenancy
-
-DigitalJamath uses **PostgreSQL Schema Isolation**:
-
-- **Public Schema**: Tenant registry (`Client`, `Domain` tables)
-- **Tenant Schemas**: Each Masjid has completely isolated tables
-
-**Create a new tenant:**
-1. Login to `/admin`
-2. Go to **Clients** → **Add Client**
-3. Set schema name and domain (e.g., `newmasjid.digitaljamath.com`)
-4. Migrations run automatically!
 
 ---
 
@@ -192,7 +220,7 @@ We welcome contributions!
 
 **Looking for:**
 - Django Developers (backend features)
-- Next.js Developers (frontend polish)
+- React Developers (frontend polish)
 - Testers (bug hunting and QA)
 - Shariah Analysts (financial logic verification)
 
@@ -217,4 +245,4 @@ MIT License - See [LICENSE](LICENSE) for details.
 | **Website** | [digitaljamath.com](https://digitaljamath.com) |
 | **Live Demo** | [demo.digitaljamath.com](https://demo.digitaljamath.com) |
 | **Documentation** | [DEPLOYMENT.md](DEPLOYMENT.md) |
-| **GitHub** | [github.com/azzaxp/digitaljamath](https://github.com/azzaxp/digitaljamath) |
+| **GitHub** | [github.com/digitaljamath/digitaljamath](https://github.com/digitaljamath/digitaljamath) |
