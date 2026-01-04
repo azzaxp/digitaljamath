@@ -35,7 +35,10 @@ export function FindWorkspacePage() {
                 captchaToken = await recaptchaRef.current.executeAsync() || "";
             }
 
-            const apiBase = getApiBaseUrl();
+            // Force absolute URL to ensure we hit the API and not Frontend (Nginx routing)
+            const apiBase = "https://digitaljamath.com";
+            console.log("Fetching API:", `${apiBase}/api/find-workspace/`);
+
             const res = await fetch(`${apiBase}/api/find-workspace/`, {
                 method: "POST",
                 headers: {
