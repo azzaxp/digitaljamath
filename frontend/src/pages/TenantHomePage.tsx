@@ -76,7 +76,7 @@ export function TenantHomePage() {
                     <h1 className="text-xl font-bold text-gray-900 mb-2">Masjid Not Found</h1>
                     <p className="text-gray-500 mb-6">{tenantError}</p>
                     <a
-                        href="http://localhost:8080/find-masjid.html"
+                        href="/find-masjid"
                         className="inline-block px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                     >
                         Find Your Masjid
@@ -169,7 +169,7 @@ export function TenantHomePage() {
             {/* Footer */}
             <footer className="border-t bg-white/80 py-4 mt-auto">
                 <div className="container mx-auto px-4 text-center text-sm text-gray-500">
-                    <p>Powered by <a href="http://localhost:8080" className="text-blue-600 hover:underline">DigitalJamath</a></p>
+                    <p>Powered by <a href="/" className="text-blue-600 hover:underline">DigitalJamath</a></p>
                 </div>
             </footer>
         </div>
