@@ -245,7 +245,15 @@ function DashboardInner() {
                 </header>
 
                 {/* Page content */}
-                <main className="p-6">
+                <main className="p-6 pt-4">
+                    {window.location.hostname.startsWith('demo.') && (
+                        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-center gap-3">
+                            <Sparkles className="h-5 w-5 text-amber-600 flex-shrink-0" />
+                            <p className="text-sm text-amber-800 font-medium">
+                                <strong>Important:</strong> You are in a demo environment. For security and quality, all sample data is <strong>automatically reset every 24 hours</strong>.
+                            </p>
+                        </div>
+                    )}
                     <Outlet />
                 </main>
             </div>
