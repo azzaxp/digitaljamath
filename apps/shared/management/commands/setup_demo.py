@@ -130,28 +130,48 @@ class Command(BaseCommand):
         
         # ... (rest of the data creation remains the same)
 
-        # Create households if not enough exist
-        if Household.objects.count() < 3:
+        # Ensure canonical demo household exists and is correct
+        demo_hh, hh_created = Household.objects.get_or_create(
+            membership_id='DEMO-001',
+            defaults={
+                'address': 'Demo Masjid Campus, Bangalore',
+                'economic_status': Household.EconomicStatus.AAM,
+                'housing_status': Household.HousingStatus.OWN,
+                'phone_number': '+919876543210',
+                'is_verified': True,
+            }
+        )
+        if not hh_created:
+            demo_hh.phone_number = '+919876543210'
+            demo_hh.is_verified = True
+            demo_hh.save()
+
+        # Ensure canonical demo member exists
+        demo_member, member_created = Member.objects.get_or_create(
+            household=demo_hh,
+            is_head_of_family=True,
+            defaults={
+                'full_name': 'Demo Head (9876543210)',
+                'relationship_to_head': Member.Relationship.SELF,
+                'gender': Member.Gender.MALE,
+                'is_approved': True,
+            }
+        )
+        if not member_created:
+            demo_member.full_name = 'Demo Head (9876543210)'
+            if 'phone' not in (demo_member.custom_data or {}):
+                if not demo_member.custom_data: demo_member.custom_data = {}
+                demo_member.custom_data['phone'] = '+919876543210'
+            demo_member.save()
+
+        # Create other households if needed
+        if Household.objects.count() < 5:
             for i, hh_data in enumerate(sample_households):
+                if i == 0: continue # Header is already handled
                 members_data = hh_data.pop('members')
-                # Set phone number for the first household to match demo login
-                if i == 0:
-                    hh_data['phone_number'] = '+919876543210'
-                    hh_data['is_verified'] = True
-                
                 household = Household.objects.create(**hh_data)
-                
-                for j, member_data in enumerate(members_data):
-                    # Add phone number to the first member as well (in custom_data since field doesn't exist)
-                    if i == 0 and j == 0:
-                        if 'custom_data' not in member_data:
-                            member_data['custom_data'] = {}
-                        member_data['custom_data']['phone'] = '+919876543210'
-                        member_data['full_name'] = "Demo Head (9876543210)"
-                    
+                for member_data in members_data:
                     Member.objects.create(household=household, is_approved=True, **member_data)
-                
-                self.stdout.write(f'  Created household: {household.membership_id}')
         
         # Create sample announcements
         announcements = [
