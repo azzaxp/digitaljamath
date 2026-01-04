@@ -19,13 +19,14 @@ sample_households = [
         "economic_status": "AAM",
         "members": [
             {
-                "full_name": "Yusuf Demo",
-                "is_head_of_family": True,
-                "gender": "MALE",
-                "marital_status": "MARRIED",
-                "dob": date(1980, 1, 1),
-                "profession": "Software Engineer",
-                "relationship_to_head": "SELF"
+                'full_name': 'Yusuf Demo',
+                'is_head_of_family': True,
+                'gender': 'MALE',
+                'marital_status': 'MARRIED',
+                'dob': date(1980, 1, 1),
+                'profession': 'Software Engineer',
+                'relationship_to_head': 'SELF',
+                'phone_number': '+919876543210'
             },
             {
                 "full_name": "Zainab Demo",
@@ -105,17 +106,17 @@ class Command(BaseCommand):
         # Create demo user
         User = get_user_model()
         demo_user, user_created = User.objects.get_or_create(
-            username='demo',
+            username='demo@digitaljamath.com',
             defaults={
-                'email': 'demo@example.com',
+                'email': 'demo@digitaljamath.com',
                 'is_staff': True,
                 'is_superuser': True,
             }
         )
         if user_created:
-            demo_user.set_password('demo123')
+            demo_user.set_password('password123')
             demo_user.save()
-            self.stdout.write(self.style.SUCCESS('Created demo user (demo/demo123)'))
+            self.stdout.write(self.style.SUCCESS('Created demo user (demo@digitaljamath.com / password123)'))
         
         # Create membership config
         MembershipConfig.objects.get_or_create(
@@ -161,8 +162,8 @@ class Command(BaseCommand):
 Demo setup complete!
 ----------------------
 URL: http://{demo_domain_name if env_domain == 'localhost' else 'https://' + demo_domain_name}
-Username: demo
-Password: demo123
+Password: password123
+Username: demo@digitaljamath.com
 
 Households: {Household.objects.count()}
 Members: {Member.objects.count()}
