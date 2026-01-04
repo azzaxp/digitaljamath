@@ -97,7 +97,6 @@ urlpatterns = [
     path('api/portal/receipts/', MemberPortalReceiptsView.as_view(), name='portal-receipts'),
     path('api/portal/announcements/', MemberPortalAnnouncementsView.as_view(), name='portal-announcements'),
     path('api/portal/service-requests/', MemberPortalServiceRequestView.as_view(), name='portal-service-requests'),
-    path('api/portal/service-requests/', MemberPortalServiceRequestView.as_view(), name='portal-service-requests'),
     path('api/portal/members/', MemberPortalMemberView.as_view(), name='portal-members'),
     
     # Member Portal Payment
