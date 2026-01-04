@@ -1,6 +1,6 @@
 # DigitalJamath
 
-![Version](https://img.shields.io/badge/version-2.0.0-blue)
+![Version](https://img.shields.io/badge/version-2.1.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Build](https://github.com/digitaljamath/digitaljamath/actions/workflows/build-and-push.yml/badge.svg)
 
@@ -12,29 +12,22 @@
 
 ---
 
-## 🎉 What's New in v2.0.0
+## 🎉 What's New in v2.1.0
 
-### 🔄 Frontend Migration: Next.js → React Vite
-- **10x faster** development server (Vite HMR)
-- **40% smaller** production bundles
-- **Simpler deployment** - static files served via Nginx
+### 📱 Mobile-First Member Portal
+- **Redesigned UI** - 420px mobile-first layout with digital ID card
+- **Consistent App Bar** - 56px sticky header across all portal pages
+- **Enhanced UX** - Smooth micro-interactions and card-based layouts
+- **Receipt Vault** - Mobile-optimized receipt viewing with one-tap PDF download
 
-### 📱 Telegram Integration
-- Member phone linking via Telegram bot
-- Bulk/individual payment reminders
-- Announcement broadcasting
-- Profile update notifications
+### 🔧 Authentication Fixes
+- Unified JWT token handling (`access_token`) across all portal pages
+- Fixed receipt filtering to use correct household association
+- Added "Add Family Member" feature to portal
 
-### 🧾 PDF Receipt Generation
-- 80G tax compliance (PAN, registration number)
-- Auto-generated for online payments
-- Member portal download + Admin generation
-
-### 🏠 Enhanced Member Portal
-- `/portal/receipts` - Payment history + PDF download
-- `/portal/family` - View household members
-- `/portal/announcements` - Read Jamath news
-- `/portal/services` - Request documents (Nikaah Nama, NOC, etc.)
+### 🌐 SEO & AI Discoverability
+- Added `llms.txt` for AI crawlers (GPTBot, Claude, etc.)
+- Added `robots.txt` with proper crawler guidance
 
 ---
 
@@ -45,12 +38,13 @@
 | **Digital Census** | Manage household and member profiles with socio-economic data |
 | **Baitul Maal** | Track Zakat, Sadaqah, and operational funds with strict fund isolation |
 | **Multi-Tenant** | Each Masjid gets isolated database schema |
-| **Welfare (Khidmat)** | Grant applications, eligibility scoring, beneficiary tracking |
-| **Basira AI** | AI-powered audit assistant for anomaly detection |
-| **Surveys** | Custom survey builder for community feedback |
-| **Member Portal** | Self-service portal with OTP login |
+| **Member Portal** | Mobile-first self-service portal with OTP login and digital ID card |
+| **Service Requests** | Members request certificates (Nikah, Death, NOC) online |
+| **Announcements** | Community notifications and event announcements |
+| **Basira AI Guide** | Intelligent assistant for platform navigation and insights |
 | **Telegram Bot** | Notifications, reminders, and member linking |
-| **PDF Receipts** | 80G-compliant receipt generation |
+| **PDF Receipts** | 80G-compliant receipt generation with tax details |
+| **Staff Management** | Role-based access control with full audit logging |
 
 ---
 
