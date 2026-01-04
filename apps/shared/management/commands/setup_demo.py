@@ -151,14 +151,14 @@ class Command(BaseCommand):
             household=demo_hh,
             is_head_of_family=True,
             defaults={
-                'full_name': 'Demo Head (9876543210)',
+                'full_name': 'Ahmed Khan',
                 'relationship_to_head': Member.Relationship.SELF,
                 'gender': Member.Gender.MALE,
                 'is_approved': True,
             }
         )
         if not member_created:
-            demo_member.full_name = 'Demo Head (9876543210)'
+            demo_member.full_name = 'Ahmed Khan'
             if 'phone' not in (demo_member.custom_data or {}):
                 if not demo_member.custom_data: demo_member.custom_data = {}
                 demo_member.custom_data['phone'] = '+919876543210'
