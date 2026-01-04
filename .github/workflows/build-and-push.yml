@@ -53,3 +53,4 @@ jobs:
             VITE_API_URL=https://digitaljamath.com
             VITE_DOMAIN_SUFFIX=digitaljamath.com
             VITE_APP_VERSION=${{ github.sha }}
+            VITE_RECAPTCHA_SITE_KEY=${{ secrets.RECAPTCHA_SITE_KEY }}

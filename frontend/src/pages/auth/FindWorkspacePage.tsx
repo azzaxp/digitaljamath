@@ -1,83 +1,158 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Loader2 } from "lucide-react";
+import { Search, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { getApiBaseUrl } from "@/lib/config";
+import ReCAPTCHA from "react-google-recaptcha";
 
 export function FindWorkspacePage() {
-    const [query, setQuery] = useState("");
-    const [results, setResults] = useState<any[]>([]);
+    const [email, setEmail] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const [hasSearched, setHasSearched] = useState(false);
+    const [isSuccess, setIsSuccess] = useState(false);
+    const [error, setError] = useState("");
+    const recaptchaRef = useRef<ReCAPTCHA>(null);
 
     const handleSearch = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!query.trim()) return;
+        setError("");
+
+        if (!email.trim()) {
+            setError("Please enter your email address.");
+            return;
+        }
 
         setIsLoading(true);
-        setHasSearched(true);
-        setResults([]);
 
         try {
+            // Get ReCAPTCHA token (only if configured/in production)
+            let captchaToken = "";
+            const siteKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
+
+            if (siteKey && recaptchaRef.current) {
+                captchaToken = await recaptchaRef.current.executeAsync() || "";
+            }
+
             const apiBase = getApiBaseUrl();
-            const res = await fetch(`${apiBase}/api/find-workspace/?q=${encodeURIComponent(query)}`);
+            const res = await fetch(`${apiBase}/api/find-workspace/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    email,
+                    captcha_token: captchaToken
+                }),
+            });
+
             if (res.ok) {
+                setIsSuccess(true);
+            } else {
                 const data = await res.json();
-                setResults(data);
+                setError(data.error || "Failed to find request. Please try again.");
             }
         } catch (err) {
             console.error("Search failed", err);
+            setError("Network error. Please try again later.");
         } finally {
             setIsLoading(false);
+            if (recaptchaRef.current) {
+                recaptchaRef.current.reset();
+            }
         }
     };
 
     return (
-        <div className="flex flex-col min-h-screen">
+        <div className="flex flex-col min-h-screen bg-gray-50/50">
             <SiteHeader />
-            <main className="flex-1 container mx-auto px-4 py-12 max-w-2xl">
-                <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold mb-2">Find Your Masjid</h1>
-                    <p className="text-muted-foreground">
-                        Enter the name of your masjid or city to find your digital workspace.
-                    </p>
-                </div>
+            <main className="flex-1 container mx-auto px-4 py-16 flex items-center justify-center">
+                <div className="w-full max-w-md bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+                    <div className="p-8">
+                        <div className="text-center mb-8">
+                            <h1 className="text-2xl font-bold mb-2 text-gray-900">Find Your Masjid</h1>
+                            <p className="text-gray-500">
+                                Enter your admin email to receive your Masjid workspace login URL.
+                            </p>
+                        </div>
 
-                <form onSubmit={handleSearch} className="flex gap-2 mb-8">
-                    <div className="relative flex-1">
-                        <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input
-                            className="pl-9"
-                            placeholder="e.g. Jama Masjid Bangalore, or 560001"
-                            value={query}
-                            onChange={(e) => setQuery(e.target.value)}
-                        />
-                    </div>
-                    <Button type="submit" disabled={isLoading}>
-                        {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Search"}
-                    </Button>
-                </form>
-
-                <div className="space-y-4">
-                    {results.map((masjid) => (
-                        <div key={masjid.schema_name} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors">
-                            <div>
-                                <h3 className="font-semibold">{masjid.name}</h3>
-                                <p className="text-sm text-gray-500">{masjid.city}, {masjid.state}</p>
+                        {isSuccess ? (
+                            <div className="text-center animate-in fade-in zoom-in duration-300">
+                                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                                    <CheckCircle2 className="h-8 w-8 text-green-600" />
+                                </div>
+                                <h3 className="text-xl font-semibold mb-2">Check Your Email</h3>
+                                <p className="text-gray-600 mb-6">
+                                    If an account exists with <strong>{email}</strong>, we've sent the login details to your inbox.
+                                </p>
+                                <Button
+                                    variant="outline"
+                                    onClick={() => {
+                                        setIsSuccess(false);
+                                        setEmail("");
+                                    }}
+                                    className="w-full"
+                                >
+                                    Try Another Email
+                                </Button>
                             </div>
-                            <Button asChild variant="outline" size="sm">
-                                <a href={`http://${masjid.domain}`}>Visit</a>
-                            </Button>
-                        </div>
-                    ))}
-                    {hasSearched && results.length === 0 && !isLoading && (
-                        <div className="text-center py-8 text-gray-500">
-                            No masjids found matching "{query}".
-                        </div>
-                    )}
+                        ) : (
+                            <form onSubmit={handleSearch} className="space-y-4">
+                                <div className="space-y-2">
+                                    <label htmlFor="email" className="text-sm font-medium text-gray-700">
+                                        Admin Email
+                                    </label>
+                                    <Input
+                                        id="email"
+                                        type="email"
+                                        placeholder="admin@masjid.com"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        className="h-11"
+                                        required
+                                    />
+                                </div>
+
+                                {import.meta.env.VITE_RECAPTCHA_SITE_KEY && (
+                                    <ReCAPTCHA
+                                        ref={recaptchaRef}
+                                        size="invisible"
+                                        sitekey={import.meta.env.VITE_RECAPTCHA_SITE_KEY}
+                                    />
+                                )}
+
+                                {error && (
+                                    <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg flex items-start gap-2">
+                                        <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                                        <span>{error}</span>
+                                    </div>
+                                )}
+
+                                <Button
+                                    type="submit"
+                                    className="w-full h-11 text-base bg-blue-600 hover:bg-blue-700"
+                                    disabled={isLoading}
+                                >
+                                    {isLoading ? (
+                                        <>
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                            Searching...
+                                        </>
+                                    ) : (
+                                        "Find Masjid"
+                                    )}
+                                </Button>
+
+                                <div className="text-center text-sm text-gray-500 mt-4">
+                                    Don't have a workspace?{" "}
+                                    <a href="/register" className="text-blue-600 hover:underline font-medium">
+                                        Register New Masjid
+                                    </a>
+                                </div>
+                            </form>
+                        )}
+                    </div>
                 </div>
             </main>
             <SiteFooter />
