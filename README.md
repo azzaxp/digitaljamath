@@ -10,56 +10,31 @@
   <img src="frontend/public/logo.png" alt="DigitalJamath Logo" width="200"/>
 </p>
 
-<p align="center">
-  <img src="frontend/public/og-image.png" alt="DigitalJamath Preview" width="100%"/>
-</p>
-
 ---
 
 ## 🎉 What's New in v2.0.0
 
-This is a **major release** with significant architectural changes and feature additions:
-
 ### 🔄 Frontend Migration: Next.js → React Vite
-
-| Aspect | Change |
-|--------|--------|
-| **Framework** | Migrated from Next.js 16 to **React 19 + Vite** |
-| **Build Speed** | 10x faster development server (HMR) |
-| **Bundle Size** | 40% smaller production builds |
-| **Complexity** | Removed SSR overhead—CSR is sufficient for this app |
-
-**Why we migrated:**
-- **Simpler Architecture**: DigitalJamath is primarily an admin panel and member portal, not a content site. Server-side rendering (SSR) added unnecessary complexity.
-- **Faster Development**: Vite's hot module replacement is instant vs Next.js's slower rebuilds.
-- **Easier Deployment**: Static files can be served from any CDN or Nginx.
+- **10x faster** development server (Vite HMR)
+- **40% smaller** production bundles
+- **Simpler deployment** - static files served via Nginx
 
 ### 📱 Telegram Integration
-
-| Feature | Description |
-|---------|-------------|
-| **Bot Login** | Members can link their phone via Telegram bot |
-| **Payment Reminders** | Bulk or individual reminders for pending dues |
-| **Announcement Broadcast** | Push announcements directly to Telegram |
-| **Profile Updates** | Notify members when their profile is edited |
+- Member phone linking via Telegram bot
+- Bulk/individual payment reminders
+- Announcement broadcasting
+- Profile update notifications
 
 ### 🧾 PDF Receipt Generation
-
-| Feature | Description |
-|---------|-------------|
-| **80G Compliance** | Receipts include PAN, 80G registration number |
-| **Auto-Generated** | PDF created for every online payment |
-| **Member Portal** | Members can download receipts anytime |
-| **Admin Access** | Generate receipts for any voucher in Baitul Maal |
+- 80G tax compliance (PAN, registration number)
+- Auto-generated for online payments
+- Member portal download + Admin generation
 
 ### 🏠 Enhanced Member Portal
-
-| Page | Features |
-|------|----------|
-| `/portal/receipts` | View payment history, download PDFs |
-| `/portal/family` | View household members and details |
-| `/portal/announcements` | Read Jamath announcements |
-| `/portal/services` | Request documents (Nikaah Nama, NOC, etc.) |
+- `/portal/receipts` - Payment history + PDF download
+- `/portal/family` - View household members
+- `/portal/announcements` - Read Jamath news
+- `/portal/services` - Request documents (Nikaah Nama, NOC, etc.)
 
 ---
 
@@ -69,11 +44,11 @@ This is a **major release** with significant architectural changes and feature a
 |---------|-------------|
 | **Digital Census** | Manage household and member profiles with socio-economic data |
 | **Baitul Maal** | Track Zakat, Sadaqah, and operational funds with strict fund isolation |
-| **Multi-Tenant** | Each Masjid gets isolated database schema (`demo.digitaljamath.com`) |
+| **Multi-Tenant** | Each Masjid gets isolated database schema |
 | **Welfare (Khidmat)** | Grant applications, eligibility scoring, beneficiary tracking |
 | **Basira AI** | AI-powered audit assistant for anomaly detection |
 | **Surveys** | Custom survey builder for community feedback |
-| **Member Portal** | Self-service portal with OTP login for members |
+| **Member Portal** | Self-service portal with OTP login |
 | **Telegram Bot** | Notifications, reminders, and member linking |
 | **PDF Receipts** | 80G-compliant receipt generation |
 
@@ -96,50 +71,46 @@ This is a **major release** with significant architectural changes and feature a
 
 ---
 
-## 📦 Project Scripts
+## 🚀 Installation Options
 
-| Script | Purpose |
-|--------|---------|
-| `setup.sh` | Interactive installer - sets up dev or prod environment |
-| `deploy.sh` | Fast production deployment - pulls pre-built images (~30 sec) |
-| `scripts/bump_version.sh` | Updates version across all files and creates git tag |
-| `scripts/populate_demo_data.py` | Populates sample data for testing |
+DigitalJamath supports two installation modes:
 
----
+### Option 1: Single-Tenant (Self-Hosted)
+**Best for:** Individual masjids who want a simple setup without subdomains.
 
-## 🚀 Quick Start
+- ✅ One masjid, one domain (e.g., `masjid.org`)
+- ✅ No subdomain configuration needed
+- ✅ Simpler DNS setup
+- ✅ Full feature access
 
-### Option 1: Production (Recommended)
+### Option 2: Multi-Tenant (SaaS)
+**Best for:** Organizations managing multiple masjids or running a hosted service.
 
-```bash
-# Clone and configure
-git clone https://github.com/digitaljamath/digitaljamath.git
-cd digitaljamath
-cp .env.example .env
-nano .env  # Set DATABASE_PASSWORD, DOMAIN_NAME, etc.
-
-# Start with pre-built images
-docker-compose -f docker-compose.prod.yml up -d
-```
-
-### Option 2: Interactive Setup
-
-```bash
-git clone https://github.com/digitaljamath/digitaljamath.git
-cd digitaljamath
-./setup.sh  # Follow prompts for dev or prod setup
-```
-
-### Future Updates
-
-```bash
-git pull origin main
-./deploy.sh  # Pulls new images, restarts frontend (~30 seconds)
-```
+- ✅ Multiple masjids with subdomains (e.g., `demo.digitaljamath.com`)
+- ✅ Isolated database schemas per tenant
+- ✅ Central administration
+- ✅ Scalable architecture
 
 ---
 
-## 💻 Development Setup
+## 📦 Quick Start
+
+### Interactive Setup (Recommended)
+
+```bash
+git clone https://github.com/digitaljamath/digitaljamath.git
+cd digitaljamath
+./setup.sh  # Follow prompts
+```
+
+The `setup.sh` script will guide you through:
+1. **Environment Mode**: Development (local) or Production (Docker)
+2. **Tenant Mode**: Single-Tenant or Multi-Tenant
+3. **Database Setup**: Migrations and initial tenant creation
+4. **Admin User**: Create your first superuser
+5. **Chart of Accounts**: Seed standard ledger accounts
+
+### Manual Development Setup
 
 ```bash
 # Clone repository
@@ -151,6 +122,7 @@ python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env
+# Edit .env with your values
 python manage.py migrate
 python manage.py runserver
 
@@ -162,55 +134,113 @@ npm run dev
 
 Access: http://localhost:5173 (frontend) | http://localhost:8000 (backend)
 
----
+### Production Docker Setup
 
-## 📋 Post-Installation (First-Time Only)
-
-After starting the containers, you must initialize the database and create your first tenant.
-
-### 1. Initialize Database
 ```bash
-docker exec -it digitaljamath_web python manage.py migrate_schemas --shared
-```
+# Configure environment
+cp .env.example .env
+nano .env  # Set DATABASE_PASSWORD, DOMAIN_NAME, etc.
 
-### 2. Create Tenants
-```bash
-# Register main domain
-docker exec -it digitaljamath_web python manage.py create_tenant --schema_name=public --domain_domain=digitaljamath.com --client_name="Digital Ummah"
+# Start with Docker
+docker-compose up -d
 
-# Register demo masjid
-docker exec -it digitaljamath_web python manage.py create_tenant --schema_name=demo --domain_domain=demo.digitaljamath.com --client_name="Demo Masjid"
-```
+# Run migrations
+docker-compose exec web python manage.py migrate_schemas --shared
 
-### 3. Setup Demo Admin & Data
-```bash
-# Create admin user
-docker exec -it digitaljamath_web python manage.py tenant_command createsuperuser --schema=demo
-
-# Seed finance ledgers (Required)
-docker exec -it digitaljamath_web python manage.py tenant_command seed_ledger --schema=demo
-
-# Populate sample data (Optional)
-docker exec -it digitaljamath_web python scripts/populate_demo_data.py --schema=demo
+# Create your tenant (see Tenant Setup below)
 ```
 
 ---
 
 ## ⚙️ Configuration
 
-Copy `.env.example` to `.env` and set:
+Copy `.env.example` to `.env` and configure:
+
+### Required Variables
 
 | Variable | Description | Example |
 |----------|-------------|---------|
 | `SECRET_KEY` | Django secret key | `your-random-string` |
-| `DEBUG` | Debug mode | `False` |
+| `DEBUG` | Debug mode (False for production) | `False` |
 | `DOMAIN_NAME` | Base domain | `digitaljamath.com` |
 | `DATABASE_PASSWORD` | PostgreSQL password | `StrongPassword123` |
-| `BREVO_SMTP_KEY` | Email API key | `xkeysib-...` |
-| `TELEGRAM_BOT_TOKEN` | Telegram bot token | `123456:ABC...` |
-| `TELEGRAM_BOT_USERNAME` | Bot username | `@YourJamathBot` |
+
+### Optional Services
+
+| Variable | Description | Required For |
+|----------|-------------|--------------|
+| `BREVO_SMTP_KEY` | Email SMTP key | Password reset, notifications |
+| `TELEGRAM_BOT_TOKEN` | Bot token from @BotFather | Member login, reminders |
+| `TELEGRAM_BOT_USERNAME` | Bot username | Telegram linking |
+| `OPENROUTER_API_KEY` | AI API key | Basira AI features |
+| `RECAPTCHA_SITE_KEY` | reCAPTCHA site key | Spam protection |
+| `RECAPTCHA_SECRET_KEY` | reCAPTCHA secret | Backend verification |
 
 > ⚠️ Never commit `.env` to version control!
+
+---
+
+## 🏠 Tenant Setup
+
+### Single-Tenant Mode (One Masjid)
+
+```bash
+# Create your masjid (use your MAIN domain, not subdomain)
+python manage.py shell -c "
+from apps.shared.models import Client, Domain
+tenant = Client(schema_name='mymasjid', name='My Masjid', on_trial=False)
+tenant.save()
+Domain.objects.create(domain='masjid.org', tenant=tenant, is_primary=True)
+"
+
+# Create admin user
+python manage.py tenant_command createsuperuser --schema=mymasjid
+
+# Seed Chart of Accounts
+python manage.py tenant_command seed_ledger --schema=mymasjid
+```
+
+### Multi-Tenant Mode (Multiple Masjids)
+
+```bash
+# Create public tenant (main site)
+python manage.py create_tenant --schema_name=public --domain_domain=digitaljamath.com --client_name="Digital Ummah"
+
+# Create first masjid
+python manage.py create_tenant --schema_name=demo --domain_domain=demo.digitaljamath.com --client_name="Demo Masjid"
+
+# Setup admin and data
+python manage.py tenant_command createsuperuser --schema=demo
+python manage.py tenant_command seed_ledger --schema=demo
+```
+
+---
+
+## 📋 setup.sh Features
+
+The interactive installer handles everything:
+
+| Step | What It Does |
+|------|--------------|
+| 1. Environment Mode | Choose Development or Production (Docker) |
+| 2. Tenant Mode | Choose Single-Tenant or Multi-Tenant |
+| 3. Environment Config | Creates `.env` from template if missing |
+| 4. Dependencies | Installs Python and Node.js packages |
+| 5. Database Migrations | Runs Django migrations |
+| 6. Public Tenant | Creates base tenant for routing |
+| 7. Your Masjid | Creates your masjid (Single-Tenant) or offers Demo setup (Multi-Tenant) |
+| 8. Chart of Accounts | Seeds standard accounting ledgers |
+
+---
+
+## 🔄 Deployment Scripts
+
+| Script | Purpose |
+|--------|---------|
+| `setup.sh` | Full installation wizard (dev or prod) |
+| `deploy.sh` | Quick update - pulls latest Docker images |
+| `scripts/bump_version.sh` | Updates version across all files |
+| `scripts/populate_demo_data.py` | Populates sample data for testing |
 
 ---
 
@@ -246,3 +276,14 @@ MIT License - See [LICENSE](LICENSE) for details.
 | **Live Demo** | [demo.digitaljamath.com](https://demo.digitaljamath.com) |
 | **Documentation** | [DEPLOYMENT.md](DEPLOYMENT.md) |
 | **GitHub** | [github.com/digitaljamath/digitaljamath](https://github.com/digitaljamath/digitaljamath) |
+
+---
+
+## 💡 Demo Access
+
+| Portal | Credentials |
+|--------|-------------|
+| **Admin Dashboard** | `demo@digitaljamath.com` / `password123` |
+| **Member Portal** | Phone: `+919876543210`, OTP: `123456` |
+
+> Note: Demo OTP `123456` only works for the demo phone number.
