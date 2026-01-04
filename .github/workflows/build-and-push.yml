@@ -50,7 +50,6 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            NEXT_PUBLIC_API_URL=https://digitaljamath.com
-            NEXT_PUBLIC_DOMAIN_SUFFIX=digitaljamath.com
-            NEXT_PUBLIC_BASE_DOMAIN=digitaljamath.com
-            NEXT_PUBLIC_APP_VERSION=${{ github.sha }}
+            VITE_API_URL=https://digitaljamath.com
+            VITE_DOMAIN_SUFFIX=digitaljamath.com
+            VITE_APP_VERSION=${{ github.sha }}

@@ -17,5 +17,6 @@ staticfiles/
 # OS
 .DS_Store
 
-# Archived (deprecated)
-frontend-nextjs-archived/
+# Node
+node_modules/
+frontend/dist/

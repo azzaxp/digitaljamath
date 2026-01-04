@@ -81,15 +81,12 @@ services:
     build:
       context: ./frontend
       args:
-        NEXT_PUBLIC_API_URL: https://${DOMAIN_NAME}
-        NEXT_PUBLIC_DOMAIN_SUFFIX: ${DOMAIN_NAME}
-        NEXT_PUBLIC_BASE_DOMAIN: ${DOMAIN_NAME}
-        NEXT_PUBLIC_APP_VERSION: ${APP_VERSION}
+        VITE_API_URL: https://${DOMAIN_NAME}
+        VITE_DOMAIN_SUFFIX: ${DOMAIN_NAME}
+        VITE_APP_VERSION: ${APP_VERSION:-2.0.0}
     container_name: digitaljamath_frontend
     expose:
-      - "3000"
-    environment:
-      - DATABASE_URL=postgres://postgres:password@db:5432/digitaljamath_db
+      - "80"
     depends_on:
       - web
     restart: always
