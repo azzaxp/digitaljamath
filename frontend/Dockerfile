@@ -33,8 +33,8 @@ FROM nginx:alpine
 # Copy built files from builder
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copy custom nginx config 
-COPY nginx.conf /etc/nginx/conf.d/default.conf 2>/dev/null || true
+# Copy custom nginx config (already copied to frontend/)
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port 80 for Nginx (or 3000 for compatibility)
 EXPOSE 80
