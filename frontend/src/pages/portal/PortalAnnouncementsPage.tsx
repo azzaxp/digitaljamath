@@ -48,24 +48,23 @@ export function PortalAnnouncementsPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-amber-50 via-white to-orange-50 p-4 md:p-8">
-            <div className="max-w-4xl mx-auto space-y-6">
-                {/* Header */}
-                <div className="flex items-center gap-4">
-                    <Button variant="ghost" size="icon" asChild>
-                        <Link to="/portal">
+        <div className="min-h-screen bg-white flex flex-col">
+            {/* Header / App Bar */}
+            <header className="bg-white border-b sticky top-0 z-50 h-[56px] flex items-center shadow-sm">
+                <div className="w-full max-w-[420px] mx-auto px-4 flex items-center gap-3">
+                    <Button variant="ghost" size="icon" asChild className="active:scale-95 transition-transform">
+                        <Link to="/portal/dashboard">
                             <ArrowLeft className="h-5 w-5" />
                         </Link>
                     </Button>
-                    <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Announcements</h1>
-                        <p className="text-sm text-gray-500">News and updates from your Jamath</p>
-                    </div>
+                    <h1 className="font-bold text-lg tracking-tight text-gray-900">Announcements</h1>
                 </div>
+            </header>
 
+            <main className="w-full max-w-[420px] mx-auto px-4 py-6 flex-1">
                 {isLoading ? (
                     <div className="flex justify-center py-12">
-                        <div className="animate-spin h-8 w-8 border-4 border-amber-500 border-t-transparent rounded-full" />
+                        <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full" />
                     </div>
                 ) : announcements.length === 0 ? (
                     <div className="text-center py-12">
@@ -78,11 +77,11 @@ export function PortalAnnouncementsPage() {
                 ) : (
                     <div className="space-y-4">
                         {announcements.map((announcement) => (
-                            <Card key={announcement.id} className="hover:shadow-md transition-shadow">
+                            <Card key={announcement.id} className="border-0 shadow-sm rounded-2xl hover:shadow-md transition-shadow">
                                 <CardHeader>
                                     <div className="flex justify-between items-start">
-                                        <CardTitle className="text-lg">{announcement.title}</CardTitle>
-                                        <div className="flex items-center gap-1 text-xs text-gray-400">
+                                        <CardTitle className="text-base font-bold">{announcement.title}</CardTitle>
+                                        <div className="flex items-center gap-1 text-[10px] text-gray-400 font-medium">
                                             <Calendar className="h-3 w-3" />
                                             {format(new Date(announcement.published_at), 'dd MMM yyyy')}
                                         </div>
@@ -97,7 +96,7 @@ export function PortalAnnouncementsPage() {
                         ))}
                     </div>
                 )}
-            </div>
+            </main>
         </div>
     );
 }

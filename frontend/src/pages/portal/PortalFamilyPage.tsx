@@ -148,20 +148,17 @@ export function PortalFamilyPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 p-4 md:p-8">
-            <div className="max-w-4xl mx-auto space-y-6">
-                {/* Header */}
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <Button variant="ghost" size="icon" asChild>
-                            <Link to="/portal">
+        <div className="min-h-screen bg-white flex flex-col">
+            {/* Header / App Bar */}
+            <header className="bg-white border-b sticky top-0 z-50 h-[56px] flex items-center shadow-sm">
+                <div className="w-full max-w-[420px] mx-auto px-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <Button variant="ghost" size="icon" asChild className="active:scale-95 transition-transform">
+                            <Link to="/portal/dashboard">
                                 <ArrowLeft className="h-5 w-5" />
                             </Link>
                         </Button>
-                        <div>
-                            <h1 className="text-2xl font-bold text-gray-900">Family Profile</h1>
-                            <p className="text-sm text-gray-500">View and update your household</p>
-                        </div>
+                        <h1 className="font-bold text-lg tracking-tight text-gray-900">Family Profile</h1>
                     </div>
 
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
@@ -277,7 +274,9 @@ export function PortalFamilyPage() {
                         </DialogContent>
                     </Dialog>
                 </div>
+            </header>
 
+            <main className="w-full max-w-[420px] mx-auto px-4 py-6 flex-1">
                 {isLoading ? (
                     <div className="flex justify-center py-12">
                         <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full" />
@@ -372,7 +371,7 @@ export function PortalFamilyPage() {
                         Household not found
                     </div>
                 )}
-            </div>
+            </main>
         </div>
     );
 }

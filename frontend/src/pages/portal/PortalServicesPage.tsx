@@ -124,30 +124,26 @@ export function PortalServicesPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50 p-4 md:p-8">
-            <div className="max-w-4xl mx-auto space-y-6">
-                {/* Header */}
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <Button variant="ghost" size="icon" asChild>
-                            <Link to="/portal">
+        <div className="min-h-screen bg-white flex flex-col">
+            {/* Header / App Bar */}
+            <header className="bg-white border-b sticky top-0 z-50 h-[56px] flex items-center shadow-sm">
+                <div className="w-full max-w-[420px] mx-auto px-4 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <Button variant="ghost" size="icon" asChild className="active:scale-95 transition-transform">
+                            <Link to="/portal/dashboard">
                                 <ArrowLeft className="h-5 w-5" />
                             </Link>
                         </Button>
-                        <div>
-                            <h1 className="text-2xl font-bold text-gray-900">Service Requests</h1>
-                            <p className="text-sm text-gray-500">Request documents and certificates</p>
-                        </div>
+                        <h1 className="font-bold text-lg tracking-tight text-gray-900">Service Desk</h1>
                     </div>
-
                     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                         <DialogTrigger asChild>
-                            <Button>
+                            <Button size="sm" className="h-9 rounded-xl font-bold active:scale-95 transition-transform">
                                 <Plus className="h-4 w-4 mr-2" />
                                 New Request
                             </Button>
                         </DialogTrigger>
-                        <DialogContent>
+                        <DialogContent className="rounded-t-[24px]">
                             <DialogHeader>
                                 <DialogTitle>New Service Request</DialogTitle>
                             </DialogHeader>
@@ -189,7 +185,9 @@ export function PortalServicesPage() {
                         </DialogContent>
                     </Dialog>
                 </div>
+            </header>
 
+            <main className="w-full max-w-[420px] mx-auto px-4 py-6 flex-1">
                 {isLoading ? (
                     <div className="flex justify-center py-12">
                         <div className="animate-spin h-8 w-8 border-4 border-purple-500 border-t-transparent rounded-full" />
@@ -205,7 +203,7 @@ export function PortalServicesPage() {
                 ) : (
                     <div className="space-y-4">
                         {requests.map((request) => (
-                            <Card key={request.id}>
+                            <Card key={request.id} className="border-0 shadow-sm rounded-2xl">
                                 <CardHeader className="pb-2">
                                     <div className="flex justify-between items-start">
                                         <CardTitle className="text-base">
@@ -234,7 +232,8 @@ export function PortalServicesPage() {
                         ))}
                     </div>
                 )}
-            </div>
+            </main>
         </div>
     );
 }
+

@@ -78,36 +78,34 @@ export function PortalReceiptsPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-4 md:p-8">
-            <div className="max-w-4xl mx-auto space-y-6">
-                {/* Header */}
-                <div className="flex items-center gap-4">
-                    <Button variant="ghost" size="icon" asChild>
-                        <Link to="/portal">
+        <div className="min-h-screen bg-white flex flex-col">
+            {/* Header / App Bar */}
+            <header className="bg-white border-b sticky top-0 z-50 h-[56px] flex items-center shadow-sm">
+                <div className="w-full max-w-[420px] mx-auto px-4 flex items-center gap-3">
+                    <Button variant="ghost" size="icon" asChild className="active:scale-95 transition-transform">
+                        <Link to="/portal/dashboard">
                             <ArrowLeft className="h-5 w-5" />
                         </Link>
                     </Button>
-                    <div>
-                        <h1 className="text-2xl font-bold text-gray-900">Payment Receipts</h1>
-                        <p className="text-sm text-gray-500">View and download your payment receipts</p>
-                    </div>
+                    <h1 className="font-bold text-lg tracking-tight text-gray-900">Receipt Vault</h1>
                 </div>
+            </header>
 
-                {/* Receipts Card */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <FileText className="h-5 w-5 text-emerald-600" />
+            <main className="w-full max-w-[420px] mx-auto px-4 py-6 flex-1">
+                <Card className="border-0 shadow-sm rounded-2xl">
+                    <CardHeader className="pb-2">
+                        <CardTitle className="flex items-center gap-2 text-base">
+                            <FileText className="h-5 w-5 text-green-600" />
                             Your Receipts
                         </CardTitle>
-                        <CardDescription>
+                        <CardDescription className="text-xs">
                             All your membership and donation payments
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
                         {isLoading ? (
                             <div className="flex justify-center py-12">
-                                <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+                                <Loader2 className="h-8 w-8 animate-spin text-green-600" />
                             </div>
                         ) : receipts.length === 0 ? (
                             <div className="text-center py-12">
@@ -116,77 +114,50 @@ export function PortalReceiptsPage() {
                                 <p className="text-sm text-gray-400 mt-1">
                                     Your payment receipts will appear here after you make a contribution.
                                 </p>
-                                <Button asChild className="mt-4" variant="outline">
-                                    <Link to="/portal">Back to Dashboard</Link>
+                                <Button asChild className="mt-4 rounded-xl" variant="outline">
+                                    <Link to="/portal/dashboard">Back to Dashboard</Link>
                                 </Button>
                             </div>
                         ) : (
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>Receipt #</TableHead>
-                                        <TableHead>Date</TableHead>
-                                        <TableHead>Description</TableHead>
-                                        <TableHead className="text-right">Amount</TableHead>
-                                        <TableHead className="text-center">Action</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {receipts.map((receipt) => (
-                                        <TableRow key={receipt.id}>
-                                            <TableCell className="font-mono text-sm">
-                                                {receipt.receipt_number}
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className="flex items-center gap-1 text-sm">
-                                                    <Calendar className="h-3 w-3 text-gray-400" />
+                            <div className="space-y-3">
+                                {receipts.map((receipt) => (
+                                    <div key={receipt.id} className="p-3 bg-gray-50 rounded-xl flex items-center justify-between">
+                                        <div className="flex-1">
+                                            <p className="font-mono text-sm font-bold text-gray-800">{receipt.receipt_number}</p>
+                                            <div className="flex items-center gap-2 mt-1">
+                                                <span className="text-xs text-gray-400">
                                                     {format(new Date(receipt.date), 'dd MMM yyyy')}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className="max-w-[200px] truncate">
-                                                    {receipt.description || 'Membership Payment'}
-                                                </div>
-                                                <Badge variant="outline" className="text-xs mt-1">
-                                                    {receipt.payment_mode}
-                                                </Badge>
-                                            </TableCell>
-                                            <TableCell className="text-right font-semibold">
-                                                <div className="flex items-center justify-end gap-1">
-                                                    <IndianRupee className="h-3 w-3" />
-                                                    {receipt.amount.toLocaleString()}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell className="text-center">
-                                                <Button
-                                                    size="sm"
-                                                    variant="outline"
-                                                    onClick={() => downloadReceipt(receipt.id, receipt.receipt_number)}
-                                                    disabled={downloadingId === receipt.id}
-                                                >
-                                                    {downloadingId === receipt.id ? (
-                                                        <Loader2 className="h-4 w-4 animate-spin" />
-                                                    ) : (
-                                                        <>
-                                                            <Download className="h-4 w-4 mr-1" />
-                                                            PDF
-                                                        </>
-                                                    )}
-                                                </Button>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                                                </span>
+                                                <Badge variant="outline" className="text-[10px] h-5">{receipt.payment_mode}</Badge>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <span className="font-bold text-gray-900">₹{receipt.amount.toLocaleString()}</span>
+                                            <Button
+                                                size="icon"
+                                                variant="ghost"
+                                                className="h-8 w-8 rounded-lg active:scale-95 transition-transform"
+                                                onClick={() => downloadReceipt(receipt.id, receipt.receipt_number)}
+                                                disabled={downloadingId === receipt.id}
+                                            >
+                                                {downloadingId === receipt.id ? (
+                                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                                ) : (
+                                                    <Download className="h-4 w-4" />
+                                                )}
+                                            </Button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         )}
                     </CardContent>
                 </Card>
 
-                {/* Info Note */}
-                <div className="text-center text-sm text-gray-500">
-                    <p>Receipts are eligible for 80G tax exemption benefits where applicable.</p>
-                </div>
-            </div>
+                <p className="text-center text-[11px] text-gray-400 mt-6">
+                    Receipts are eligible for 80G tax exemption benefits where applicable.
+                </p>
+            </main>
         </div>
     );
 }
