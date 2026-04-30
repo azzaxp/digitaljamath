@@ -1,316 +1,148 @@
-# DigitalJamath
+<p align="center">
+  <img src="frontend/public/logo.png" alt="DigitalJamath" width="180" />
+</p>
 
-![Version](https://img.shields.io/badge/version-2.0.1--alpha-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
-![Build](https://github.com/digitaljamath/digitaljamath/actions/workflows/build-and-push.yml/badge.svg)
-
-**DigitalJamath** is an open-source, production-grade SaaS ERP for Indian Masjids, Jamaths, and Welfare organizations. It operates as a single unified platform with three main options (Login as Mosque, Register as Mosque, Login as User) to handle census data, financial management (Baitul Maal), welfare distribution, and community engagement. Mosques can register and manage their own users centrally.
+<h1 align="center">DigitalJamath</h1>
 
 <p align="center">
-  <img src="frontend/public/logo.png" alt="DigitalJamath Logo" width="200"/>
+  <strong>Free, open-source community-trust software for Indian Masjids, Jamaths, and welfare organisations.</strong><br />
+  Census, Baitul Maal, welfare grants, member portal, and an AI guide — on one unified platform.
+</p>
+
+<p align="center">
+  <a href="https://github.com/digitaljamath/digitaljamath/blob/main/LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-green" /></a>
+  <a href="https://github.com/digitaljamath/digitaljamath/actions/workflows/build-and-push.yml"><img alt="Build" src="https://github.com/digitaljamath/digitaljamath/actions/workflows/build-and-push.yml/badge.svg" /></a>
+  <img alt="Version" src="https://img.shields.io/badge/version-2.1.0-blue" />
+  <a href="https://digitaljamath.com">🌐 digitaljamath.com</a>
+  ·
+  <a href="https://demo.digitaljamath.com">▶ Live demo</a>
 </p>
 
 ---
 
-## 🎉 What's New in v2.1.0
+## السلام عليكم — welcome 👋
 
-### 📱 Mobile-First Member Portal
-- **Redesigned UI** - 420px mobile-first layout with digital ID card
-- **Consistent App Bar** - 56px sticky header across all portal pages
-- **Enhanced UX** - Smooth micro-interactions and card-based layouts
-- **Receipt Vault** - Mobile-optimized receipt viewing with one-tap PDF download
+Most masjids in India still run on paper registers, WhatsApp groups, and a treasurer's notebook. **DigitalJamath** is the open-source platform that brings the whole community trust online — the donations *and* the people receiving help — without locking your data inside someone else's cloud.
 
-### 🔧 Authentication Fixes
-- Unified JWT token handling (`access_token`) across all portal pages
-- Fixed receipt filtering to use correct household association
-- Added "Add Family Member" feature to portal
+We built this because:
 
-### 🌐 SEO & AI Discoverability
-- Added `llms.txt` for AI crawlers (GPTBot, Claude, etc.)
-- Added `robots.txt` with proper crawler guidance
+- 🕌 **Mosques deserve software made for them** — not generic CRMs or accounting tools that don't understand Zakat, Asnaaf, Waqf, or the May 31 Form 10BD deadline.
+- 🤲 **Both sides matter** — every other platform tracks donors. We also track Zakat-eligible households, welfare grants, and beneficiary impact.
+- 🔓 **Your data is yours** — self-hostable, MIT-licensed, no vendor lock-in. Run it on a ₹500/month VPS or use the hosted version at [digitaljamath.com](https://digitaljamath.com).
+- 🌍 **Built in the open by the community** — every line of code is on GitHub. PRs welcome. Questions welcome. Just-a-trustee-with-an-idea? Welcome.
 
-### 🤖 Basira AI RBAC
-- **Dynamic role-based access** - AI only shows data user has permission to see
-- **Prompt injection protection** - Regex-based guards against manipulation
-- **Pyramid principle** - Concise answers first, details only when asked
-- **Date/time context** - AI knows current date and user identity
+> **Not just donation software — community-trust software.**
 
 ---
 
-## ✨ Key Features
+## ✨ What's inside
 
-| Feature | Description |
-|---------|-------------|
-| **Digital Census** | Manage household and member profiles with socio-economic data |
-| **Baitul Maal** | Track Zakat, Sadaqah, and operational funds with strict fund isolation |
-| **Unified Platform** | One website where Mosques register and manage their own users centrally |
-| **Member Portal** | Mobile-first self-service portal with OTP login and digital ID card |
-| **Service Requests** | Members request certificates (Nikah, Death, NOC) online |
-| **Announcements** | Community notifications and event announcements |
-| **Basira AI Guide** | RBAC-secured AI assistant with role-based data access and prompt injection protection |
-| **Telegram Bot** | Notifications, reminders, and member linking |
-| **PDF Receipts** | 80G-compliant receipt generation with tax details |
-| **Staff Management** | Role-based access control with full audit logging |
-
----
-
-## 🛠 Tech Stack
-
-| Layer | Technology |
-|-------|------------|
-| **Backend** | Python 3.11+, Django 5.0, Django REST Framework |
-| **Architecture** | Single Unified Database Platform (No Multi-Tenancy) |
-| **Database** | PostgreSQL 16+ |
-| **Frontend** | React 19, Vite, TypeScript |
-| **Styling** | Tailwind CSS + Shadcn UI |
-| **Containerization** | Docker + Docker Compose |
-| **CI/CD** | GitHub Actions → GitHub Container Registry |
-| **Email** | Brevo SMTP |
-| **AI** | OpenRouter (Gemini/Llama) |
-| **Messaging** | Telegram Bot API |
+| | Feature | What it does |
+|---|---------|--------------|
+| 🏠 | **Digital Census** | Households + members, socio-economic data, auto Zakat-eligibility scoring |
+| 💰 | **Baitul Maal** | Real double-entry ledger for Zakat / Sadaqah / operational funds with strict isolation |
+| 🧾 | **80G-compliant Receipts** | Auto-generated PDFs with PAN, donor details, and tax-claim-ready formatting |
+| 🤝 | **Welfare Grants** | Beneficiary applications, approval workflow, recurring stipend tracking |
+| 📱 | **Member Portal** | Mobile-first OTP login, digital ID card, receipt vault, family management |
+| 📣 | **Announcements** | Community notifications, events, RSVPs |
+| 📋 | **Service Requests** | Nikah, Death, NOC certificates with online intake |
+| 🤖 | **Basira AI Guide** | RBAC-secured assistant with prompt-injection protection |
+| 💬 | **Telegram Bot** | Reminders, receipts, notifications, member linking |
+| 🏛️ | **Staff & Audit** | Role-based access, full activity log, configurable permissions |
 
 ---
 
-## 🚀 Unified Platform
+## 🚀 Try it
 
-DigitalJamath operates as a single unified platform on one website.
-
-### Three Main Options
-1. **Login as Mosque**
-2. **Register as Mosque**
-3. **Login as User**
-
-After a Mosque registers, it can create and manage its own users. Those users log in through the "Login as User" option, functioning similarly to a tenant system but without actually implementing multi-tenancy.
-
----
-
-## 📦 Quick Start
-
-### Interactive Setup (Recommended)
-
-```bash
-git clone https://github.com/digitaljamath/digitaljamath.git
-cd digitaljamath
-./setup.sh  # Follow prompts
-```
-
-The `setup.sh` script will guide you through:
-1. **Environment Mode**: Development (local) or Production (Docker)
-2. **Platform Mode**: Unified Platform initialization
-3. **Database Setup**: Migrations and initial Mosque setup
-4. **Admin User**: Create your first superuser
-5. **Chart of Accounts**: Seed standard ledger accounts
-
-### Manual Development Setup
-
-```bash
-# Clone repository
-git clone https://github.com/digitaljamath/digitaljamath.git
-cd digitaljamath
-
-# Backend setup
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env
-# Edit .env with your values
-python manage.py migrate
-python manage.py runserver
-
-# Frontend setup (new terminal)
-cd frontend
-npm install
-npm run dev
-```
-
-Access: http://localhost:5173 (frontend) | http://localhost:8000 (backend)
-
-### Local Development with Nginx (Unified Platform)
-
-For testing unified local routing, use the local nginx config:
-
-**Prerequisites:**
-- Install nginx: `brew install nginx` (macOS) or `apt install nginx` (Linux)
-
-**1. Start all services (3 terminals):**
-
-```bash
-# Terminal 1 - Django backend
-cd digitaljamath
-source venv/bin/activate
-python manage.py runserver
-
-# Terminal 2 - Vite frontend
-cd digitaljamath/frontend
-npm run dev
-
-# Terminal 3 - Nginx proxy
-cd digitaljamath
-nginx -p $(pwd) -c nginx/nginx.local.conf
-```
-
-**2. Access URLs:**
-
-| URL | What it serves |
-|-----|----------------|
-| http://localhost | Main website (Login/Register Mosque, Login User) |
-| http://localhost/portal | React app (Mosque/User workspace) |
-| http://localhost/api/ | Django API |
-| http://localhost/admin/ | Django Admin |
-
-**3. Stop nginx when done:**
-
-```bash
-nginx -s stop
-```
-
-> **Note:** The `nginx.local.conf` proxies requests to `localhost:5173` (Vite) and `localhost:8000` (Django). Make sure both dev servers are running before starting nginx.
-
-### Production Docker Setup
-
-```bash
-# Configure environment
-cp .env.example .env
-nano .env  # Set DATABASE_PASSWORD, DOMAIN_NAME, etc.
-
-# Start with Docker
-docker-compose up -d
-
-# Run migrations
-docker-compose exec web python manage.py migrate
-
-# Create your initial Mosque (see Platform Setup below)
-```
-
----
-
-## ⚙️ Configuration
-
-Copy `.env.example` to `.env` and configure:
-
-### Required Variables
-
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `SECRET_KEY` | Django secret key | `your-random-string` |
-| `DEBUG` | Debug mode (False for production) | `False` |
-| `DOMAIN_NAME` | Base domain | `digitaljamath.com` |
-| `DATABASE_PASSWORD` | PostgreSQL password | `StrongPassword123` |
-
-### Optional Services
-
-| Variable | Description | Required For |
-|----------|-------------|--------------|
-| `BREVO_SMTP_KEY` | Email SMTP key | Password reset, notifications |
-| `TELEGRAM_BOT_TOKEN` | Bot token from @BotFather | Member login, reminders |
-| `TELEGRAM_BOT_USERNAME` | Bot username | Telegram linking |
-| `OPENROUTER_API_KEY` | AI API key | Basira AI features |
-
-
-> ⚠️ Never commit `.env` to version control!
-
----
-
-## 🏠 Platform Setup
-
-### Unified Platform Operations
-
-```bash
-# Create a Mosque account
-python manage.py create_mosque --name="Demo Masjid" --email="demo@masjid.org"
-
-# Setup admin and data for a generic user
-python manage.py createsuperuser
-python manage.py seed_ledger --mosque="Demo Masjid"
-```
-
----
-
-## 📋 setup.sh Features
-
-The interactive installer handles everything:
-
-| Step | What It Does |
-|------|--------------|
-| 1. Environment Mode | Choose Development or Production (Docker) |
-| 2. Platform Mode | Initializes unified platform mode |
-| 3. Environment Config | Creates `.env` from template if missing |
-| 4. Dependencies | Installs Python and Node.js packages |
-| 5. Database Migrations | Runs Django migrations |
-| 6. Base Setup | Sets up unified database |
-| 7. Your Masjid | Registers the first initial Mosque |
-| 8. Chart of Accounts | Seeds standard accounting ledgers |
-
----
-
-## 🔄 Deployment Scripts
-
-| Script | Purpose |
-|--------|---------|
-| `setup.sh` | Full installation (wipes data if not careful - use only for fresh install) |
-| `deploy.sh` | **Safe Update** - Pulls code, rebuilds containers, runs migrations (No data loss) |
-| `scripts/bump_version.sh` | Updates version across all files |
-| `scripts/populate_demo_data.py` | Populates sample data for testing |
-
----
-
-## 🛡️ Safe Update Process
-**Never run `setup.sh` on a production server that already has data!** 
-
-To update your production server safely (e.g., after pushing changes to GitHub):
-```bash
-cd ~/workspace/digitaljamath
-./deploy.sh
-```
-This script will:
-1. Pull the latest code (`git pull`)
-2. Rebuild containers (`docker-compose build`)
-3. Run migrations (`migrate`)
-4. Restart services
-**It will NOT interfere with your database or delete any platform data.**
-
----
-
-## 🤝 Contributing
-
-We welcome contributions!
-
-**Looking for:**
-- Django Developers (backend features)
-- React Developers (frontend polish)
-- Testers (bug hunting and QA)
-- Shariah Analysts (financial logic verification)
-
-**How to contribute:**
-1. Fork the repository
-2. Create feature branch: `git checkout -b feature/AmazingFeature`
-3. Commit changes: `git commit -m 'Add AmazingFeature'`
-4. Push and open a Pull Request
-
----
-
-## 📄 License
-
-MIT License - See [LICENSE](LICENSE) for details.
-
----
-
-## 🔗 Links
-
-| Resource | URL |
-|----------|-----|
-| **Website** | [digitaljamath.com](https://digitaljamath.com) |
-| **Live Demo** | [demo.digitaljamath.com](https://demo.digitaljamath.com) |
-| **Documentation** | [DEPLOYMENT.md](DEPLOYMENT.md) |
-| **GitHub** | [github.com/digitaljamath/digitaljamath](https://github.com/digitaljamath/digitaljamath) |
-
----
-
-## 💡 Demo Access
+**Hosted demo (no install)** — [demo.digitaljamath.com](https://demo.digitaljamath.com)
 
 | Portal | Credentials |
 |--------|-------------|
-| **Admin Dashboard** | `demo@digitaljamath.com` / `password123` |
-| **Member Portal** | Phone: `+919876543210`, OTP: `123456` |
+| Admin Dashboard | `demo@digitaljamath.com` / `password123` |
+| Member Portal | Phone `+919876543210`, OTP `123456` |
 
-> Note: Demo OTP `123456` only works for the demo phone number.
+**Run it yourself** — clone, run one command, you're online:
+
+```bash
+git clone https://github.com/digitaljamath/digitaljamath.git
+cd digitaljamath
+./setup.sh
+```
+
+The interactive installer handles env config, dependencies, migrations, your first Mosque, and a seeded chart of accounts. Pick *Development* for local hacking or *Production* for Docker.
+
+Manual setup, Nginx config, and a full deployment walkthrough live in [DEPLOYMENT.md](DEPLOYMENT.md).
+
+---
+
+## 🛠 Built with
+
+Python 3.11+ · Django 5 · Django REST Framework · React 19 · Vite · TypeScript · Tailwind · Shadcn UI · PostgreSQL 16 · Docker · GitHub Actions · OpenRouter (Gemini / Llama) · Brevo SMTP · Telegram Bot API · Razorpay
+
+The marketing site (the welcoming homepage at [digitaljamath.com](https://digitaljamath.com)) is a separate Next.js app and lives at [digitaljamath/digitaljamath-website](https://github.com/digitaljamath/digitaljamath-website).
+
+---
+
+## 🗺️ Roadmap
+
+We're focused on three things competitors structurally can't copy:
+
+1. **🇮🇳 Compliance Copilot** — one-click Form 10BD CSV export, auto-issued Form 10BE certificates for donors, T-30/T-15/T-7 reminders before May 31, penalty-exposure calculator. Trustees feel this pain every year — we're going to fix it.
+2. **🪪 Public Trust Page** — a live, cryptographically-verifiable "₹X in, ₹Y out, Z families helped" dashboard for every mosque. Donor confidence is the #1 fundraising barrier; this is the answer.
+3. **🤝 Cross-Mosque Welfare Registry** — privacy-preserving check that prevents the same household from claiming aid from multiple mosques. Only possible because we went unified-DB.
+
+Beyond those: Madrassah module · Qabristan management · Imam payroll · Mahalla circles · WhatsApp-native receipts. Pitch your idea in an issue or PR — the roadmap is community-driven.
+
+---
+
+## 🤲 Get involved
+
+You don't have to be a 10x engineer to help. We need:
+
+- **🐍 Django developers** — backend features, performance, API polish
+- **⚛️ React developers** — frontend craft, animations, accessibility
+- **🧪 Testers** — bug hunting, QA, edge cases
+- **📖 Shariah scholars** — verifying our Zakat/Asnaaf/Waqf logic is sound
+- **🌐 Translators** — Tamil, Urdu, Malayalam, Hindi, Bangla, Arabic
+- **✍️ Writers** — docs, tutorials, mosque success stories
+- **🕌 Trustees + Imams** — tell us what's missing; you know best
+
+**How:**
+1. Fork the repo
+2. Branch off main: `git checkout -b feat/your-amazing-thing`
+3. Commit, push, open a PR
+4. We'll review with kindness — `barakallahu feekum` for every contribution.
+
+First-time contributor? Look for the [`good first issue`](https://github.com/digitaljamath/digitaljamath/labels/good%20first%20issue) label, or just open an issue saying hi.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the longer version.
+
+---
+
+## 🙏 With gratitude
+
+DigitalJamath exists because of every trustee who shared their workflow, every developer who sent a PR at 2am, every imam who patiently explained how the Asnaaf categories actually work, and every donor who trusted us to build their receipt right.
+
+A heartfelt **JazakAllah Khair** to everyone who has shaped this project. Your name belongs on this list — open an issue and we'll add you.
+
+---
+
+## 📜 License
+
+MIT. Use it, fork it, host it, sell support around it — just keep the license notice. See [LICENSE](LICENSE).
+
+## 🔗 Links
+
+- 🌐 Website — [digitaljamath.com](https://digitaljamath.com)
+- ▶ Demo — [demo.digitaljamath.com](https://demo.digitaljamath.com)
+- 📦 Marketing site repo — [digitaljamath-website](https://github.com/digitaljamath/digitaljamath-website)
+- 📘 Deployment guide — [DEPLOYMENT.md](DEPLOYMENT.md)
+- 🤝 Contributing guide — [CONTRIBUTING.md](CONTRIBUTING.md)
+- 🐛 Issues — [github.com/digitaljamath/digitaljamath/issues](https://github.com/digitaljamath/digitaljamath/issues)
+
+---
+
+<p align="center">
+  <em>Built with care for the Ummah.</em><br />
+  <em>اللهم بارك</em>
+</p>
