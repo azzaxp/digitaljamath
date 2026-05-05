@@ -15,11 +15,17 @@ export function getApiBaseUrl(): string {
 }
 
 export function getLandingPageUrl(): string {
-    // If we're on the local Vite dev server, redirect back to the local Nginx proxy
+    // Local Vite dev server: send users to the local Nginx proxy.
     if (window.location.port === '5173' || window.location.port === '5174') {
         return 'http://127.0.0.1/'
     }
-    // In production, Nginx serves the root / as the Django landing page
+    // Production: the SPA lives on app.<root>; the marketing site lives on <root>.
+    // Strip the "app." prefix so "Go Back Home" lands on the marketing site.
+    const host = window.location.hostname
+    if (host.startsWith('app.')) {
+        return `${window.location.protocol}//${host.slice(4)}/`
+    }
+    // Same-origin fallback (e.g. SPA and marketing co-hosted on one domain).
     return '/'
 }
 

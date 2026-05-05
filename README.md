@@ -15,7 +15,7 @@
   <img alt="Version" src="https://img.shields.io/badge/version-2.1.0-blue" />
   <a href="https://digitaljamath.com">🌐 digitaljamath.com</a>
   ·
-  <a href="https://demo.digitaljamath.com">▶ Live demo</a>
+  <a href="https://app.digitaljamath.com">▶ Live demo</a>
 </p>
 
 ---
@@ -54,12 +54,15 @@ We built this because:
 
 ## 🚀 Try it
 
-**Hosted demo (no install)** — [demo.digitaljamath.com](https://demo.digitaljamath.com)
+**Hosted demo (no install)** — [app.digitaljamath.com](https://app.digitaljamath.com)
 
 | Portal | Credentials |
 |--------|-------------|
 | Admin Dashboard | `demo@digitaljamath.com` / `password123` |
 | Member Portal | Phone `+919876543210`, OTP `123456` |
+
+> Self-hosting? Seed the same demo masjid + data with one command after install:
+> `docker compose exec web python manage.py setup_demo`
 
 **Run it yourself** — clone, run one command, you're online:
 
@@ -134,7 +137,7 @@ MIT. Use it, fork it, host it, sell support around it — just keep the license 
 ## 🔗 Links
 
 - 🌐 Website — [digitaljamath.com](https://digitaljamath.com)
-- ▶ Demo — [demo.digitaljamath.com](https://demo.digitaljamath.com)
+- ▶ Demo — [app.digitaljamath.com](https://app.digitaljamath.com)
 - 📦 Marketing site repo — [digitaljamath-website](https://github.com/digitaljamath/digitaljamath-website)
 - 📘 Deployment guide — [DEPLOYMENT.md](DEPLOYMENT.md)
 - 🤝 Contributing guide — [CONTRIBUTING.md](CONTRIBUTING.md)
