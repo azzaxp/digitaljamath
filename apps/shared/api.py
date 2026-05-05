@@ -52,9 +52,10 @@ class MosqueRegistrationView(generics.CreateAPIView):
 
         from .tasks import create_tenant_task
         import os
-        
+
         base_domain = os.environ.get('DOMAIN_NAME', 'localhost')
-        
+        protocol = 'https' if not settings.DEBUG else 'http'
+
         if settings.DEBUG or os.environ.get('CELERY_SYNC', 'false').lower() == 'true':
             try:
                 result = create_tenant_task(task_data)
@@ -62,7 +63,7 @@ class MosqueRegistrationView(generics.CreateAPIView):
                     "message": "Mosque created successfully.",
                     "status": "SUCCESS",
                     "task_id": "sync-task",
-                    "login_url": result.get('login_url', f"http://{base_domain}/auth/masjid/login")
+                    "login_url": result.get('login_url', f"{protocol}://{base_domain}/auth/masjid/login")
                 }, status=status.HTTP_201_CREATED)
             except Exception as e:
                 return Response({
@@ -75,7 +76,7 @@ class MosqueRegistrationView(generics.CreateAPIView):
                 "message": "Mosque creation started.",
                 "status": "pending",
                 "task_id": task_result.id,
-                "login_url": f"http://{base_domain}/auth/masjid/login"
+                "login_url": f"{protocol}://{base_domain}/auth/masjid/login"
             }, status=status.HTTP_202_ACCEPTED)
 
 _reg_otp_store = {}

@@ -75,29 +75,33 @@ docker-compose -f docker-compose.prod.yml up -d
 ---
 
 ## 4. DNS Configuration (Cloudflare)
-Go to your Cloudflare Dashboard -> **DNS** and add these records:
+The platform runs on **two subdomains**:
+
+- `digitaljamath.com` (apex + `www`) — public marketing site
+- `app.digitaljamath.com` — unified SaaS entry point (admin login + member portal). Tenant context is resolved from the JWT, not from the subdomain.
+
+Add these records in Cloudflare DNS:
 
 | Type | Name | Content | Proxy |
 |------|------|---------|-------|
 | A | `@` | `<Your-Server-IP>` | **Proxied** (Orange Cloud) |
-| A | `*` | `<Your-Server-IP>` | **Proxied** (Orange Cloud) |
 | A | `www` | `<Your-Server-IP>` | **Proxied** (Orange Cloud) |
+| A | `app` | `<Your-Server-IP>` | **Proxied** (Orange Cloud) |
 
-### SSL/TLS Setting (Important!)
-Since our standard Docker setup uses **Nginx on Port 80**, you must set Cloudflare SSL to **Flexible**:
+> Per-jamath subdomains (`*.digitaljamath.com`) are no longer supported. Existing tenant subdomain bookmarks 301-redirect to `app.digitaljamath.com<path>`.
 
-1. Go to **SSL/TLS** -> **Overview**.
-2. Set mode to **Flexible** (Not Full/Strict).
-   *   *Full/Strict requires installing certs on the server, which is more complex.*
+### SSL/TLS Setting
+Run `certbot --nginx` on the origin for `app.digitaljamath.com`, `digitaljamath.com`, and `www.digitaljamath.com`, then set Cloudflare **SSL/TLS → Overview → Full (strict)**. Make sure the origin nginx server blocks listen on **both 80 and 443** without an HTTP→HTTPS redirect — otherwise Cloudflare in Flexible mode (port-80 fetch) will hit a redirect loop.
 
 ---
 
 ## 5. Verification
 Wait 1-2 minutes for DNS to propagate.
 
-1. **Frontend**: Visit `https://digitaljamath.com`.
-2. **Demo Portal**: Visit `https://demo.digitaljamath.com`.
-3. **Admin Panel**: Visit `https://digitaljamath.com/admin/`.
+1. **Marketing**: Visit `https://digitaljamath.com` → Next.js landing.
+2. **App (admin login)**: Visit `https://app.digitaljamath.com` → React SPA.
+3. **Admin Panel**: Visit `https://app.digitaljamath.com/admin/`.
+4. **Old subdomain redirect**: Visit `https://anything.digitaljamath.com/foo` → 301 to `https://app.digitaljamath.com/foo`.
 
 ---
 
