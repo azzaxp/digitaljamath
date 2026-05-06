@@ -1,4 +1,4 @@
-import { getApiBaseUrl, getLandingPageUrl } from "@/lib/config";
+import { getApiBaseUrl } from "@/lib/config";
 import logo from "@/assets/logo.png";
 import { useRbac } from "@/context/RbacContext";
 import { useLocation, useNavigate, Link, Outlet } from "react-router-dom";
@@ -137,10 +137,10 @@ function DashboardInner() {
                 <div className="flex flex-col h-full">
                     {/* Logo */}
                     <div className="flex items-center justify-between h-20 px-8 border-b border-slate-200/50">
-                        <a href={getLandingPageUrl()} className="flex items-center justify-center font-extrabold text-xl gap-2 text-slate-900 tracking-tight hover:opacity-90 transition-opacity">
+                        <Link to="/dashboard" className="flex items-center justify-center font-extrabold text-xl gap-2 text-slate-900 tracking-tight hover:opacity-90 transition-opacity">
                             <img src={logo} alt="DigitalJamath Logo" className="h-8 w-8 drop-shadow-sm" />
                             <span>Digital<span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 to-indigo-600">Jamath</span></span>
-                        </a>
+                        </Link>
                         <Button
                             variant="ghost"
                             size="icon"
