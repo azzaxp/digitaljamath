@@ -1,0 +1,2 @@
+# Digital Jamath Frappe App dependencies
+# Upstream runtime provided by Frappe Bench: frappe, erpnext

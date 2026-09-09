@@ -1,0 +1,146 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:JM-{#####}",
+ "creation": "2026-09-08 21:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "membership_id",
+  "phone_number",
+  "is_verified",
+  "economic_status",
+  "zakat_score",
+  "column_break_1",
+  "housing_status",
+  "monthly_income",
+  "has_critical_illness",
+  "is_widow_household",
+  "section_address",
+  "address",
+  "section_members",
+  "members"
+ ],
+ "fields": [
+  {
+   "fieldname": "membership_id",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Membership ID (e.g. JM-001)",
+   "unique": 1
+  },
+  {
+   "fieldname": "phone_number",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Primary Contact Phone (for OTP Login)",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_verified",
+   "fieldtype": "Check",
+   "label": "Admin Verified"
+  },
+  {
+   "default": "Aam / Sahib-e-Nisab",
+   "fieldname": "economic_status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Economic Status",
+   "options": "Aam / Sahib-e-Nisab\nZakat Eligible",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "zakat_score",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Zakat Score (0-100)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Own House",
+   "fieldname": "housing_status",
+   "fieldtype": "Select",
+   "label": "Housing Status",
+   "options": "Own House\nRented\nFamily Property"
+  },
+  {
+   "default": "0.00",
+   "fieldname": "monthly_income",
+   "fieldtype": "Currency",
+   "label": "Total Household Monthly Income"
+  },
+  {
+   "default": "0",
+   "fieldname": "has_critical_illness",
+   "fieldtype": "Check",
+   "label": "Critical Illness / High Medical Expense in Family"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_widow_household",
+   "fieldtype": "Check",
+   "label": "Widow / Single Mother Household"
+  },
+  {
+   "fieldname": "section_address",
+   "fieldtype": "Section Break",
+   "label": "Residential Address"
+  },
+  {
+   "fieldname": "address",
+   "fieldtype": "Small Text",
+   "label": "Street Address / Mohalla"
+  },
+  {
+   "fieldname": "section_members",
+   "fieldtype": "Section Break",
+   "label": "Family Members (Afrad)"
+  },
+  {
+   "fieldname": "members",
+   "fieldtype": "Table",
+   "label": "Members",
+   "options": "Jamath Member"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-09-08 21:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Census",
+ "name": "Jamath Household",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "role": "Accounts User",
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

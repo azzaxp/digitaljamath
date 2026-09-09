@@ -1,0 +1,60 @@
+name: digitaljamath
+
+services:
+  backend:
+    image: frappe/erpnext:v15.25.0
+    deploy:
+      restart_policy:
+        condition: on-failure
+    volumes:
+      - sites:/home/frappe/frappe-bench/sites
+      - ./digital_jamath:/home/frappe/frappe-bench/apps/digital_jamath
+    environment:
+      - DB_HOST=mariadb
+      - DB_PORT=3306
+      - REDIS_CACHE=redis-cache:6379
+      - REDIS_QUEUE=redis-queue:6379
+    ports:
+      - "8000:8000"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+      redis-cache:
+        condition: service_started
+      redis-queue:
+        condition: service_started
+
+  mariadb:
+    image: mariadb:11.4
+    environment:
+      - MYSQL_ROOT_PASSWORD=digitaljamath_admin
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --skip-character-set-client-handshake
+      - --innodb-file-format=Barracuda
+      - --innodb-file-per-table=1
+      - --innodb-large-prefix=1
+    volumes:
+      - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pdigitaljamath_admin"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis-cache:
+    image: redis:7-alpine
+    volumes:
+      - redis-cache-data:/data
+
+  redis-queue:
+    image: redis:7-alpine
+    volumes:
+      - redis-queue-data:/data
+
+volumes:
+  db-data:
+  redis-cache-data:
+  redis-queue-data:
+  sites:

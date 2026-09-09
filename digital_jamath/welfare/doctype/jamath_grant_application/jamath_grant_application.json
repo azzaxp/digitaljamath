@@ -1,0 +1,148 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:GRN-{YYYY}-{#####}",
+ "creation": "2026-09-08 21:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "applicant_household",
+  "applicant_name",
+  "economic_status",
+  "zakat_score",
+  "status",
+  "column_break_1",
+  "amount_requested",
+  "disbursed_amount",
+  "cross_mosque_checked",
+  "cross_mosque_flagged",
+  "section_description",
+  "description",
+  "dedup_notes",
+  "admin_remarks"
+ ],
+ "fields": [
+  {
+   "fieldname": "applicant_household",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Applicant Household",
+   "options": "Jamath Household",
+   "reqd": 1
+  },
+  {
+   "fieldname": "applicant_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Applicant Full Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "economic_status",
+   "fieldtype": "Data",
+   "label": "Economic Status",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "zakat_score",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Zakat Score",
+   "read_only": 1
+  },
+  {
+   "default": "Applied",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Application Status",
+   "options": "Applied\nScoring\nApproved\nRejected\nDisbursed"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "amount_requested",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Amount Requested (INR)",
+   "reqd": 1
+  },
+  {
+   "default": "0.00",
+   "fieldname": "disbursed_amount",
+   "fieldtype": "Currency",
+   "label": "Disbursed Amount (INR)"
+  },
+  {
+   "default": "0",
+   "fieldname": "cross_mosque_checked",
+   "fieldtype": "Check",
+   "label": "Cross-Mosque Verified",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "cross_mosque_flagged",
+   "fieldtype": "Check",
+   "label": "Duplicate Aid Flagged",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_description",
+   "fieldtype": "Section Break",
+   "label": "Grant Purpose & Details"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text",
+   "label": "Reason / Emergency Description",
+   "reqd": 1
+  },
+  {
+   "fieldname": "dedup_notes",
+   "fieldtype": "Small Text",
+   "label": "Registry Dedup Notes",
+   "read_only": 1
+  },
+  {
+   "fieldname": "admin_remarks",
+   "fieldtype": "Small Text",
+   "label": "Committee Notes / Approval Decision"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-09-08 21:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Welfare",
+ "name": "Jamath Grant Application",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "role": "Accounts User",
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

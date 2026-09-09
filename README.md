@@ -80,9 +80,12 @@ Manual setup, Nginx config, and a full deployment walkthrough live in [DEPLOYMEN
 
 ## 🛠 Built with
 
-Python 3.11+ · Django 5 · Django REST Framework · React 19 · Vite · TypeScript · Tailwind · Shadcn UI · PostgreSQL 16 · Docker · GitHub Actions · OpenRouter (Gemini / Llama) · Brevo SMTP · Telegram Bot API · Razorpay
+Frappe Framework 15+ · ERPNext 15+ · Python 3.11+ · MariaDB 11+ · Next.js 16 · TypeScript · Tailwind CSS · Docker · Redis · OpenRouter (Basira AI Guide) · Razorpay
 
-The marketing site (the welcoming homepage at [digitaljamath.com](https://digitaljamath.com)) is a separate Next.js app and lives at [digitaljamath/digitaljamath-website](https://github.com/digitaljamath/digitaljamath-website).
+The platform is organized cleanly into:
+- **Core App (`digital_jamath`)**: Custom Frappe app providing Baitul Maal fund isolation, census, and welfare workflows.
+- **Marketing & Member Portal**: Next.js app living at [digitaljamath/digitaljamath-website](https://github.com/digitaljamath/digitaljamath-website).
+- **Legacy Django Stack**: Preserved on git branch `legacy/django` and in `legacy_django/`.
 
 ---
 
@@ -92,7 +95,7 @@ We're focused on three things competitors structurally can't copy:
 
 1. **🇮🇳 Compliance Copilot** — one-click Form 10BD CSV export, auto-issued Form 10BE certificates for donors, T-30/T-15/T-7 reminders before May 31, penalty-exposure calculator. Trustees feel this pain every year — we're going to fix it.
 2. **🪪 Public Trust Page** — a live, cryptographically-verifiable "₹X in, ₹Y out, Z families helped" dashboard for every mosque. Donor confidence is the #1 fundraising barrier; this is the answer.
-3. **🤝 Cross-Mosque Welfare Registry** — privacy-preserving check that prevents the same household from claiming aid from multiple mosques. Only possible because we went unified-DB.
+3. **🤝 Cross-Mosque Welfare Registry** — privacy-preserving check that prevents the same household from claiming aid from multiple mosques.
 
 Beyond those: Madrassah module · Qabristan management · Imam payroll · Mahalla circles · WhatsApp-native receipts. Pitch your idea in an issue or PR — the roadmap is community-driven.
 
@@ -102,8 +105,8 @@ Beyond those: Madrassah module · Qabristan management · Imam payroll · Mahall
 
 You don't have to be a 10x engineer to help. We need:
 
-- **🐍 Django developers** — backend features, performance, API polish
-- **⚛️ React developers** — frontend craft, animations, accessibility
+- **🐍 Frappe & Python developers** — backend DocTypes, ledger validators, API polish
+- **⚛️ React & Next.js developers** — mobile-first member portal, animations, accessibility
 - **🧪 Testers** — bug hunting, QA, edge cases
 - **📖 Shariah scholars** — verifying our Zakat/Asnaaf/Waqf logic is sound
 - **🌐 Translators** — Tamil, Urdu, Malayalam, Hindi, Bangla, Arabic

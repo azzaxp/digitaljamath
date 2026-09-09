@@ -1,0 +1,96 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:fund_type",
+ "creation": "2026-09-08 21:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "fund_type",
+  "fund_name",
+  "fund_category",
+  "is_zakat",
+  "is_active",
+  "column_break_1",
+  "description"
+ ],
+ "fields": [
+  {
+   "fieldname": "fund_type",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Fund Type Identifier",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "fund_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Fund Display Name",
+   "reqd": 1
+  },
+  {
+   "default": "Restricted",
+   "fieldname": "fund_category",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Fund Category",
+   "options": "Restricted\nUnrestricted",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_zakat",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Is Zakat (Strict Shariah Isolation)"
+  },
+  {
+   "default": "1",
+   "fieldname": "is_active",
+   "fieldtype": "Check",
+   "label": "Is Active"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description / Purpose"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-09-08 21:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Baitul Maal",
+ "name": "Fund Type",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "Accounts User"
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

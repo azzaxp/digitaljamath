@@ -1,0 +1,121 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:ANN-{YYYY}-{#####}",
+ "creation": "2026-09-08 21:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "title",
+  "status",
+  "is_public",
+  "is_fundraiser",
+  "column_break_1",
+  "published_at",
+  "expires_at",
+  "fundraising_target",
+  "amount_raised",
+  "section_content",
+  "content"
+ ],
+ "fields": [
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Announcement Title",
+   "reqd": 1
+  },
+  {
+   "default": "Published",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Published\nDraft\nExpired"
+  },
+  {
+   "default": "1",
+   "fieldname": "is_public",
+   "fieldtype": "Check",
+   "label": "Visible to Public (Outside Portal)"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_fundraiser",
+   "fieldtype": "Check",
+   "label": "Is Fundraising Campaign"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "published_at",
+   "fieldtype": "Datetime",
+   "label": "Published At"
+  },
+  {
+   "fieldname": "expires_at",
+   "fieldtype": "Datetime",
+   "label": "Expires At"
+  },
+  {
+   "default": "0.00",
+   "depends_on": "eval:doc.is_fundraiser==1",
+   "fieldname": "fundraising_target",
+   "fieldtype": "Currency",
+   "label": "Fundraising Target (INR)"
+  },
+  {
+   "default": "0.00",
+   "depends_on": "eval:doc.is_fundraiser==1",
+   "fieldname": "amount_raised",
+   "fieldtype": "Currency",
+   "label": "Amount Raised (INR)"
+  },
+  {
+   "fieldname": "section_content",
+   "fieldtype": "Section Break",
+   "label": "Notice Content"
+  },
+  {
+   "fieldname": "content",
+   "fieldtype": "Text Editor",
+   "label": "Announcement Body",
+   "reqd": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-09-08 21:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Welfare",
+ "name": "Jamath Announcement",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "read": 1,
+   "role": "Accounts User",
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}

@@ -1,0 +1,115 @@
+<div class="receipt-container" style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; padding: 25px; border: 2px solid #0F5132; border-radius: 8px; max-width: 800px; margin: 0 auto; color: #1E293B;">
+    <!-- Header Section -->
+    <div style="text-align: center; border-bottom: 2px solid #D1E7DD; padding-bottom: 15px; margin-bottom: 20px;">
+        <h2 style="margin: 0; color: #0F5132; font-size: 24px; font-weight: 700;">{{ doc.company }}</h2>
+        <p style="margin: 4px 0; font-size: 13px; color: #64748B;">
+            {{ frappe.db.get_value("Company", doc.company, "org_address") or "" }}
+        </p>
+        <div style="margin-top: 8px; font-size: 12px; font-weight: 600; color: #0F5132; background: #D1E7DD; display: inline-block; padding: 4px 12px; border-radius: 20px;">
+            80G Registration No: {{ frappe.db.get_value("Company", doc.company, "registration_80g") or "PENDING" }} | Trust PAN: {{ frappe.db.get_value("Company", doc.company, "tax_id") or "" }}
+        </div>
+    </div>
+
+    <!-- Title & Details Grid -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <div>
+            <span style="font-size: 18px; font-weight: 700; color: #0F5132; text-transform: uppercase; letter-spacing: 0.5px;">Donation & Fee Receipt</span>
+        </div>
+        <div style="text-align: right; font-size: 13px;">
+            <div><strong>Receipt No:</strong> {{ doc.name }}</div>
+            <div><strong>Date:</strong> {{ frappe.utils.formatdate(doc.posting_date, "dd-MM-yyyy") }}</div>
+        </div>
+    </div>
+
+    <!-- Donor Information Box -->
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 13px;">
+        <tr style="background: #F8FAFC;">
+            <td style="padding: 10px; border: 1px solid #E2E8F0; width: 25%; font-weight: 600;">Received From:</td>
+            <td style="padding: 10px; border: 1px solid #E2E8F0; width: 75%; font-weight: 700; font-size: 14px;">
+                {{ doc.party_name or doc.user_remark or "Generous Donor" }}
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 10px; border: 1px solid #E2E8F0; font-weight: 600;">Donor PAN:</td>
+            <td style="padding: 10px; border: 1px solid #E2E8F0; font-family: monospace; font-size: 14px; font-weight: 700; color: #0F5132;">
+                {{ doc.donor_pan or "Not Provided" }}
+            </td>
+        </tr>
+        <tr style="background: #F8FAFC;">
+            <td style="padding: 10px; border: 1px solid #E2E8F0; font-weight: 600;">Payment Mode:</td>
+            <td style="padding: 10px; border: 1px solid #E2E8F0;">
+                {{ doc.mode_of_payment or "Cash / Online" }}
+            </td>
+        </tr>
+    </table>
+
+    <!-- Line Items Table -->
+    <table style="width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 13px;">
+        <thead>
+            <tr style="background: #0F5132; color: #FFFFFF; text-align: left;">
+                <th style="padding: 10px; border: 1px solid #0F5132;">Sl.</th>
+                <th style="padding: 10px; border: 1px solid #0F5132;">Particulars / Fund Allocation</th>
+                <th style="padding: 10px; border: 1px solid #0F5132;">Fund Category</th>
+                <th style="padding: 10px; border: 1px solid #0F5132; text-align: right;">Amount (INR)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% set total = [0] %}
+            {% for item in doc.accounts %}
+                {% if item.credit > 0 %}
+                <tr>
+                    <td style="padding: 8px 10px; border: 1px solid #CBD5E1;">{{ loop.index }}</td>
+                    <td style="padding: 8px 10px; border: 1px solid #CBD5E1;">
+                        <strong>{{ item.account }}</strong>
+                        {% if item.user_remark %}<br><small style="color: #64748B;">{{ item.user_remark }}</small>{% endif %}
+                    </td>
+                    <td style="padding: 8px 10px; border: 1px solid #CBD5E1;">
+                        <span style="display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;
+                            {% if item.fund_type == 'Zakat' %}background: #FEF3C7; color: #D97706;
+                            {% elif item.fund_type == 'Sadaqah' %}background: #D1FAE5; color: #059669;
+                            {% else %}background: #DBEAFE; color: #2563EB;{% endif %}">
+                            {{ item.fund_type or "General" }}
+                        </span>
+                    </td>
+                    <td style="padding: 8px 10px; border: 1px solid #CBD5E1; text-align: right; font-weight: 600;">
+                        ₹{{ "{:,.2f}".format(item.credit) }}
+                    </td>
+                </tr>
+                {% endif %}
+            {% endfor %}
+            <tr style="background: #F1F5F9; font-weight: 700; font-size: 14px;">
+                <td colspan="3" style="padding: 10px; border: 1px solid #CBD5E1; text-align: right;">Total Amount:</td>
+                <td style="padding: 10px; border: 1px solid #CBD5E1; text-align: right; color: #0F5132;">
+                    ₹{{ "{:,.2f}".format(doc.total_credit or doc.total_amount or 0) }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Amount in Words -->
+    <div style="margin-bottom: 25px; padding: 12px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 4px; font-size: 13px;">
+        <strong>Amount in Words:</strong> {{ frappe.utils.money_in_words(doc.total_credit or doc.total_amount or 0) }}
+    </div>
+
+    <!-- Statutory 80G Disclaimer -->
+    <div style="font-size: 11px; color: #64748B; line-height: 1.5; border-top: 1px dashed #CBD5E1; padding-top: 15px; margin-bottom: 40px;">
+        <p style="margin: 0;">
+            <strong>Tax Exemption Note:</strong> Donations to this Trust are eligible for deduction under Section 80G of the Income Tax Act, 1961. 
+            This receipt will be reported in Form 10BD for the applicable financial year. Donors are advised to verify their PAN for automatic credit on the Income Tax AIS/TIS portal.
+        </p>
+    </div>
+
+    <!-- Signature Footer -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+        <div style="font-size: 11px; color: #94A3B8;">
+            Generated electronically by Digital Jamath<br>
+            Verification Hash: {{ frappe.utils.get_url() }}
+        </div>
+        <div style="text-align: center; width: 200px;">
+            <div style="height: 50px;"></div>
+            <div style="border-top: 1px solid #1E293B; padding-top: 5px; font-size: 12px; font-weight: 600;">
+                Authorized Trustee / Treasurer
+            </div>
+        </div>
+    </div>
+</div>

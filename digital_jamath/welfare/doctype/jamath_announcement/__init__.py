@@ -1,0 +1,1 @@
+# jamath_announcement init

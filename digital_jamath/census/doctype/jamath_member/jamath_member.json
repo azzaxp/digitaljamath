@@ -1,0 +1,125 @@
+{
+ "actions": [],
+ "creation": "2026-09-08 21:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "full_name",
+  "relationship_to_head",
+  "is_head_of_family",
+  "gender",
+  "dob",
+  "column_break_1",
+  "marital_status",
+  "profession",
+  "education",
+  "is_employed",
+  "monthly_income",
+  "column_break_2",
+  "skills",
+  "requirements",
+  "is_alive"
+ ],
+ "fields": [
+  {
+   "fieldname": "full_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Full Name",
+   "reqd": 1
+  },
+  {
+   "default": "Self",
+   "fieldname": "relationship_to_head",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Relationship to Head",
+   "options": "Self\nSpouse\nSon\nDaughter\nParent\nSibling\nOther",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_head_of_family",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Head of Family"
+  },
+  {
+   "default": "Male",
+   "fieldname": "gender",
+   "fieldtype": "Select",
+   "label": "Gender",
+   "options": "Male\nFemale"
+  },
+  {
+   "fieldname": "dob",
+   "fieldtype": "Date",
+   "label": "Date of Birth"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Single",
+   "fieldname": "marital_status",
+   "fieldtype": "Select",
+   "label": "Marital Status",
+   "options": "Single\nMarried\nWidowed\nDivorced"
+  },
+  {
+   "fieldname": "profession",
+   "fieldtype": "Data",
+   "label": "Profession / Occupation"
+  },
+  {
+   "fieldname": "education",
+   "fieldtype": "Data",
+   "label": "Education (e.g. 10th, Graduate, Hafiz)"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_employed",
+   "fieldtype": "Check",
+   "label": "Is Employed"
+  },
+  {
+   "fieldname": "monthly_income",
+   "fieldtype": "Currency",
+   "label": "Monthly Income"
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "skills",
+   "fieldtype": "Data",
+   "label": "Skills"
+  },
+  {
+   "fieldname": "requirements",
+   "fieldtype": "Small Text",
+   "label": "Special Needs (Dialysis, Wheelchair, etc.)"
+  },
+  {
+   "default": "1",
+   "fieldname": "is_alive",
+   "fieldtype": "Check",
+   "label": "Is Alive"
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-09-08 21:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Census",
+ "name": "Jamath Member",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 0
+}

@@ -1,0 +1,1 @@
+# fund_type init

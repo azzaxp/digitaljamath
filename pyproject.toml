@@ -1,0 +1,20 @@
+[build-system]
+requires = ["flit_core >=3.4,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "digital_jamath"
+authors = [
+    { name = "Digital Jamath", email = "info@digitaljamath.com"}
+]
+description = "Community Trust & Baitul Maal Platform for Indian Masjids, Jamaths & NGOs"
+requires-python = ">=3.10"
+readme = "README.md"
+dynamic = ["version"]
+dependencies = [
+    # upstream dependencies: frappe, erpnext
+]
+
+[project.urls]
+Homepage = "https://digitaljamath.com"
+Repository = "https://github.com/digitaljamath/digitaljamath"
